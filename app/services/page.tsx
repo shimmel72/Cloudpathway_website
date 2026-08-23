@@ -61,7 +61,7 @@ export default function ServicesPage() {
                   <Icon className="h-6 w-6" />
                 </span>
                 <h2 className="mt-6 text-3xl font-semibold sm:text-4xl">{service.name}</h2>
-                <p className="mt-2 text-lg font-medium text-brand-600 dark:text-brand-300">
+                <p className="mt-2 text-lg font-medium text-brand-700 dark:text-brand-300">
                   {service.kicker}
                 </p>
                 <p className="mt-6 text-base leading-relaxed text-body">{service.summary}</p>

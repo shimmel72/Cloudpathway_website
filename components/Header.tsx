@@ -34,7 +34,7 @@ export function Header() {
                   aria-current={active ? "page" : undefined}
                   className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                     active
-                      ? "text-brand-600 dark:text-brand-300"
+                      ? "text-brand-700 dark:text-brand-300"
                       : "text-body hover:text-strong"
                   }`}
                 >

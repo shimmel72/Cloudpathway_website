@@ -33,7 +33,7 @@ export function Eyebrow({ children, dark = false }: { children: ReactNode; dark?
   return (
     <p
       className={`mb-4 text-xs font-semibold uppercase tracking-[0.16em] ${
-        dark ? "text-accent-400" : "text-brand-600"
+        dark ? "text-accent-400" : "text-brand-700 dark:text-brand-300"
       }`}
     >
       {children}

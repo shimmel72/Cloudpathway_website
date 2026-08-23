@@ -162,7 +162,7 @@ export default function HomePage() {
                   </span>
                   <div>
                     <h3 className="text-lg font-semibold text-strong">{service.name}</h3>
-                    <p className="text-sm font-medium text-brand-600 dark:text-brand-300">{service.kicker}</p>
+                    <p className="text-sm font-medium text-brand-700 dark:text-brand-300">{service.kicker}</p>
                   </div>
                 </div>
 
@@ -177,7 +177,7 @@ export default function HomePage() {
                 <div className="mt-auto pt-7">
                   <Link
                     href={`/services#${service.slug}`}
-                    className="text-sm font-semibold text-brand-600 underline-offset-4 hover:underline dark:text-brand-300"
+                    className="text-sm font-semibold text-brand-700 underline-offset-4 hover:underline dark:text-brand-300"
                   >
                     Full {service.name} details &rarr;
                   </Link>
