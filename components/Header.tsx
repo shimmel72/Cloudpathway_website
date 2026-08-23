@@ -56,7 +56,7 @@ export function Header() {
               href="/contact"
               className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
             >
-              Get a quote
+              Request a demo
             </Link>
           </div>
 
@@ -98,7 +98,7 @@ export function Header() {
               href="/contact"
               className="mt-2 rounded-lg bg-brand-600 px-4 py-2.5 text-center text-sm font-semibold text-white"
             >
-              Get a quote
+              Request a demo
             </Link>
           </Container>
         </div>

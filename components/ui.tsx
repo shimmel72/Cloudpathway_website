@@ -140,7 +140,7 @@ export function Stat({ value, label, dark = false }: { value: string; label: str
 
 export function CtaBand({
   title = "Let's talk about your phones.",
-  body = "Tell us what you run today and what is not working. We will come back with a design and an itemized quote — usually within two business days.",
+  body = "Tell us what you run today and what is not working. We will come back with a design and an itemized quote — and if you would rather see it working first, ask for a demo.",
 }: {
   title?: string;
   body?: string;
@@ -153,7 +153,7 @@ export function CtaBand({
           <p className="mt-4 text-lg leading-relaxed text-ink-300">{body}</p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Button href="/contact" variant="primary" withArrow>
-              Request a quote
+              Request a demo
             </Button>
             <Button href="/services" variant="ghost">
               Compare services

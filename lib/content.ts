@@ -32,7 +32,7 @@ export const services: Service[] = [
       },
       {
         title: "Fraud protection on by default",
-        body: "Per-trunk spend caps, destination allow-lists, and anomaly alerting are standard. If someone finds a way into your PBX at 2am, the bleeding stops in minutes instead of showing up on a five-figure invoice.",
+        body: "Per-trunk spend caps, destination allow-lists, and anomaly alerting are standard. If someone finds a way into your PBX at 2am, the caps stop the bleeding automatically rather than letting it run until the invoice arrives.",
       },
     ],
     includes: [
@@ -160,9 +160,19 @@ export const featureGroups: FeatureGroup[] = [
 
 export const differentiators = [
   {
+    icon: "shield",
+    title: "We tell you we're new",
+    body: "Cloudpathway is pre-launch. You will not find invented uptime percentages or a logo wall of customers we do not have on this site, because the moment you catch a provider padding one number you have to wonder about all of them.",
+  },
+  {
+    icon: "bolt",
+    title: "Proof before commitment",
+    body: "We do not expect you to take our word for any of it. Ask for a demo and we will stand up a working call flow with your requirements in it — your routing, your hours, your failover — and let you break it before money changes hands.",
+  },
+  {
     icon: "headset",
-    title: "You reach a human who can fix it",
-    body: "Support is staffed by engineers with access to the platform, not a script and an escalation queue. When you call about a problem, the person answering can look at your actual call flow while you are still on the line.",
+    title: "Small enough to reach an engineer",
+    body: "There is no tier-one queue to get past, because there is no tier one. The person who answers can open the platform and look at your call flow while you are still on the line. That is a property of our size, and we intend to protect it as we grow.",
   },
   {
     icon: "chart",
@@ -170,12 +180,12 @@ export const differentiators = [
     body: "Our proposals list every recurring charge, every one-time cost, and every regulatory fee we know about. The number at the bottom is the number on your first invoice.",
   },
   {
-    icon: "bolt",
+    icon: "globe",
     title: "We do the migration work",
     body: "Porting, dial plan mapping, handset provisioning, and interoperability testing are part of onboarding — not a professional-services line item you find out about later.",
   },
   {
-    icon: "shield",
+    icon: "sliders",
     title: "No hostage contracts",
     body: "Month-to-month is available on every service, and your numbers are yours. If you decide to leave, we port them out promptly and without a retention gauntlet.",
   },
@@ -183,31 +193,43 @@ export const differentiators = [
 
 export const process = [
   { step: "01", title: "Discovery call", body: "Thirty minutes on what you run today, what breaks, and what you actually need. No slide deck." },
-  { step: "02", title: "Written proposal", body: "A design and an itemized quote, usually within two business days, including migration steps and timeline." },
-  { step: "03", title: "Build & test", body: "We stand up your dial plan in parallel with your existing service and test it with you before anything cuts over." },
-  { step: "04", title: "Port & go live", body: "Numbers move on a scheduled window with an engineer on the call. Old service stays up until we are all satisfied." },
-  { step: "05", title: "Ongoing support", body: "Direct access to the same engineers, plus changes you can make yourself whenever you like." },
+  { step: "02", title: "Demo on request", body: "We build a working call flow to your requirements and let you test it yourself, before any commitment." },
+  { step: "03", title: "Written proposal", body: "A design and an itemized quote, usually within two business days, including migration steps and timeline." },
+  { step: "04", title: "Build & test", body: "We stand up your dial plan in parallel with your existing service and test it with you before anything cuts over." },
+  { step: "05", title: "Port & go live", body: "Numbers move on a scheduled window with an engineer on the call. Old service stays up until we are all satisfied." },
 ];
 
 export const values = [
+  { title: "Say what is actually true", body: "It is genuinely tempting to round a number up on a website. We would rather be the provider whose claims you never have to double-check." },
   { title: "Answer the phone", body: "We sell telephone service. It would be absurd for us to be hard to reach — so we are not." },
   { title: "Explain the tradeoff", body: "Sometimes the cheaper option is genuinely worse. We would rather tell you why than quietly sell you the wrong thing." },
   { title: "Design for the bad day", body: "Anyone can carry calls when the network is healthy. We plan around the circuit cut and the failed power supply." },
-  { title: "Leave it better documented", body: "You get the diagrams, the credentials, and the dial plan for the system you paid for. It is yours." },
 ];
 
 export const faqs = [
   {
+    q: "You are a new company. Why would we trust you with our phones?",
+    a: "You should not trust us on the strength of a website — ours or anyone else's. What we can offer instead is evidence you can check yourself: a demo built to your requirements that you are free to try to break, a month-to-month term so leaving costs you nothing but the effort of porting, and numbers that remain yours throughout. We would rather earn a small book of customers who can vouch for us than win a large one on claims we cannot back.",
+  },
+  {
+    q: "What does \u201centerprise-grade\u201d actually mean here?",
+    a: "Specific things, not a feeling. Calls are served from more than one geographic location, so losing a facility reroutes traffic rather than dropping your service. SIP signaling runs over TLS and media over SRTP. Outbound calls carry STIR/SHAKEN attestation. Somebody is on call around the clock for outages. Those are the claims we make, and a demo is the fastest way to confirm each of them.",
+  },
+  {
+    q: "Can we see it before we commit?",
+    a: "Yes, and we would prefer it. Tell us your routing, your business hours, and what should happen when a site goes dark, and we will build that call flow and hand it to you to test. Demos are available on request at no cost and with no obligation.",
+  },
+  {
     q: "Can we keep our existing phone numbers?",
-    a: "Yes. Number porting is included with every service, covering main numbers, DID blocks, toll-free, and fax lines. We handle the paperwork with your current carrier and schedule the cutover with you — most ports complete in two to four weeks depending on the losing carrier.",
+    a: "Yes. Number porting is included with every service, covering main numbers, DID blocks, toll-free, and fax lines. We handle the paperwork with your current carrier and schedule the cutover with you \u2014 most ports complete in two to four weeks depending on how quickly the losing carrier moves.",
   },
   {
     q: "What internet connection do we need?",
-    a: "Roughly 100 Kbps per concurrent call with G.711, or about a third of that with G.729. Far more important than raw bandwidth is consistency — we will review your circuit and, if it makes sense, recommend QoS settings or a separate voice VLAN. For high call volumes we can deliver over a dedicated circuit instead of the public internet.",
+    a: "Roughly 100 Kbps per concurrent call with G.711, or about a third of that with G.729. Far more important than raw bandwidth is consistency \u2014 we will review your circuit and, if it makes sense, recommend QoS settings or a separate voice VLAN. For high call volumes we can deliver over a dedicated circuit instead of the public internet.",
   },
   {
     q: "What happens if our internet goes down?",
-    a: "Inbound calls reroute automatically according to rules you set in advance — to another site, to a backup trunk, to mobile numbers, or straight to voicemail. Because the failover happens in our network rather than on your equipment, it works even when the site is completely dark.",
+    a: "Inbound calls reroute according to rules you set in advance \u2014 to another site, to a backup trunk, to mobile numbers, or straight to voicemail. Because the failover happens in our network rather than on your equipment, it works even when the site is completely dark. This is one of the things worth testing during a demo.",
   },
   {
     q: "Do we have to replace our phone system?",
@@ -215,10 +237,10 @@ export const faqs = [
   },
   {
     q: "Can we keep our desk phones?",
-    a: "Usually. Most SIP handsets from the last decade — Poly, Yealink, Cisco, Grandstream, Snom — work with our platform, and we can reprovision them for you. We will tell you honestly if a model is too old to be worth keeping.",
+    a: "Usually. Most SIP handsets from the last decade \u2014 Poly, Yealink, Cisco, Grandstream, Snom \u2014 work with our platform, and we can reprovision them for you. We will tell you honestly if a model is too old to be worth keeping.",
   },
   {
     q: "How long are the contracts?",
-    a: "Month-to-month is available on every service. Longer terms are available if you would prefer a lower rate in exchange for commitment, but that is your choice rather than a requirement.",
+    a: "Month-to-month is available on every service. Longer terms are available if you would prefer a lower rate in exchange for commitment, but that is your choice rather than a requirement \u2014 and for a provider as new as we are, we think month-to-month is the honest default.",
   },
 ];

@@ -2,6 +2,13 @@
 
 Marketing and lead-capture site for Cloudpathway — SIP trunking and hosted PBX services.
 
+> **On claims:** Cloudpathway is pre-launch, and the copy says so plainly. The site asserts no
+> uptime percentages, response times, customer counts, or reference logos. The only capabilities
+> claimed anywhere are four that were confirmed to exist today: geographic redundancy, round-the-clock
+> on-call, TLS/SRTP encryption, and STIR/SHAKEN attestation. Everything else on the page is either a
+> product feature or a policy commitment the company controls. Please keep it that way — add a metric
+> only once it is measured and defensible.
+
 ## Stack
 
 | Layer | Choice | Why |
@@ -86,13 +93,15 @@ node -e "const D=require('better-sqlite3');console.table(new D('data/cloudpathwa
 
 These are stand-in values, all in one place:
 
-- **`lib/site.ts`** — phone number, sales/support email addresses, postal address, support hours,
-  and the headline statistics (uptime SLA, pickup time, data centers, countries). Every one of
-  these is currently a placeholder and needs replacing with real figures you can stand behind.
+- **`lib/site.ts`** — phone number, sales/support email addresses, and postal address are still
+  placeholders and need replacing. The headline statistics that used to live here have been removed
+  entirely; `startupNote` replaces them with a plain statement that the company is new.
 - **Lead delivery** — submissions are only written to SQLite. Nothing emails or notifies anyone
   yet. Wire `app/api/contact/route.ts` to email, a CRM, or a webhook so enquiries reach a person.
-- **Content review** — copy in `lib/content.ts` describes typical SIP/PBX capabilities. Confirm
-  each claim matches what Cloudpathway actually delivers before publishing.
+- **Content review** — copy in `lib/content.ts` describes SIP/PBX capabilities. Confirm each one
+  matches what Cloudpathway actually delivers before publishing, and re-check it as the product
+  changes. The FAQ answer about what "enterprise-grade" means is the load-bearing one: it names
+  four specific capabilities a buyer can test, so it must stay accurate.
 
 ## Project layout
 

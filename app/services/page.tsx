@@ -94,7 +94,7 @@ export default function ServicesPage() {
                 </ul>
                 <div className="mt-7 border-t border-subtle pt-6">
                   <Button href="/contact" variant="primary" className="w-full" withArrow>
-                    Get a quote
+                    Request a demo
                   </Button>
                 </div>
               </Card>

@@ -15,8 +15,8 @@ export function Footer() {
               <span className="text-lg font-semibold tracking-tight text-strong">{site.name}</span>
             </div>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-body">
-              Carrier-grade SIP trunking and hosted PBX for businesses that need their phones to
-              work every single day.
+              SIP trunking and hosted PBX on enterprise-grade infrastructure, from a new
+              independent voice provider. Demos available on request.
             </p>
           </div>
 

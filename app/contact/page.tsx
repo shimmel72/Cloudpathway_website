@@ -19,9 +19,10 @@ export default function ContactPage() {
             <Eyebrow>Contact</Eyebrow>
             <h1 className="text-4xl font-semibold sm:text-5xl">Tell us about your phones</h1>
             <p className="mt-5 text-lg leading-relaxed text-body">
-              Fill this in and an engineer — not a sales development rep — will get back to you
-              within one business day with questions or a proposal. If you would rather just talk,
-              the number is on the right.
+              Fill this in and an engineer &mdash; not a sales development rep &mdash; will get
+              back to you within one business day. Demos are available on request: tell us how your
+              calls should route and we will build it so you can test it yourself. If you would
+              rather just talk, the number is on the right.
             </p>
           </div>
         </Container>
@@ -93,7 +94,11 @@ export default function ContactPage() {
                   you run today and what breaks.
                 </li>
                 <li>
-                  <span className="font-semibold text-strong">3.</span> A written design and an
+                  <span className="font-semibold text-strong">3.</span> A demo, if you want one
+                  &mdash; your call flow, built for you to test at no cost.
+                </li>
+                <li>
+                  <span className="font-semibold text-strong">4.</span> A written design and an
                   itemized quote, typically inside two business days.
                 </li>
               </ol>
@@ -105,8 +110,8 @@ export default function ContactPage() {
       <Section tone="muted" id="faq">
         <SectionHeading
           eyebrow="FAQ"
-          title="Questions we get asked before signing"
-          lead="If yours is not here, put it in the form — we would rather answer it up front."
+          title="Questions worth asking a new provider"
+          lead="Including the uncomfortable one. If yours is not here, put it in the form — we would rather answer it up front."
         />
         <div className="mt-12 grid gap-x-10 gap-y-8 lg:grid-cols-2">
           {faqs.map((f) => (

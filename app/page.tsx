@@ -1,7 +1,16 @@
 import Link from "next/link";
 import { differentiators, featureGroups, services } from "@/lib/content";
-import { site, stats } from "@/lib/site";
-import { Bolt, Chart, Cloud, Globe, Headset, Phone, Shield, Sliders } from "@/components/Icons";
+import { site, startupNote } from "@/lib/site";
+import {
+  Bolt,
+  Chart,
+  Cloud,
+  Globe,
+  Headset,
+  Phone,
+  Shield,
+  Sliders,
+} from "@/components/Icons";
 import {
   Button,
   Card,
@@ -11,7 +20,6 @@ import {
   Eyebrow,
   Section,
   SectionHeading,
-  Stat,
 } from "@/components/ui";
 
 const serviceIcons = {
@@ -24,12 +32,14 @@ const differentiatorIcons = {
   chart: Chart,
   bolt: Bolt,
   shield: Shield,
+  globe: Globe,
+  sliders: Sliders,
 } as const;
 
 const pillars = [
-  { icon: Shield, title: "Built to stay up", body: "Geo-redundant call routing, automatic failover, and a platform designed around the day something breaks." },
-  { icon: Headset, title: "Support that answers", body: "Engineers with real platform access, not a call center reading from a script and opening a ticket." },
-  { icon: Sliders, title: "You keep control", body: "Change your own call flows, users, and schedules from a browser instead of waiting on a carrier." },
+  { icon: Shield, title: "Redundant by design", body: "Calls are served from more than one geographic location. Losing a facility reroutes traffic instead of taking your phones down." },
+  { icon: Headset, title: "Someone on call", body: "Outages reach a person around the clock — one who can open the platform and look at your call flow, not just log a ticket." },
+  { icon: Sliders, title: "You keep control", body: "Change your own call flows, users, and schedules from a browser instead of waiting on a carrier ticket." },
   { icon: Bolt, title: "Migrations we run", body: "Porting, provisioning, and interop testing are part of onboarding, not a surprise services invoice." },
 ];
 
@@ -47,30 +57,32 @@ export default function HomePage() {
           className="pointer-events-none absolute -bottom-56 -left-40 h-[32rem] w-[32rem] rounded-full bg-accent-500/10 blur-3xl"
         />
         <Container className="relative py-20 sm:py-28">
-          <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="grid items-center gap-14 lg:grid-cols-[1.12fr_0.88fr]">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-medium text-ink-200">
                 <span className="h-1.5 w-1.5 rounded-full bg-accent-400" />
-                SIP trunking &amp; hosted PBX
+                SIP trunking &amp; hosted PBX &middot; pre-launch
               </span>
 
-              <h1 className="mt-6 text-4xl font-semibold leading-[1.08] text-white sm:text-5xl lg:text-[3.4rem]">
-                Business phone service that just{" "}
+              <h1 className="mt-6 text-4xl font-semibold leading-[1.08] text-white sm:text-5xl lg:text-[3.05rem]">
+                <span className="whitespace-nowrap">Enterprise-grade</span> voice from a company you
+                haven&rsquo;t heard of{" "}
                 <span className="bg-gradient-to-r from-brand-300 to-accent-300 bg-clip-text text-transparent">
-                  works
+                  yet
                 </span>
                 .
               </h1>
 
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-300">
-                {site.name} moves your company off aging phone lines and onto a voice network built
-                for uptime. Keep the PBX you have with our SIP trunks, or hand the whole thing over
-                and let us run it. Either way, your numbers come with you.
+                {site.name} is new. The platform is not a prototype: geographically redundant call
+                routing, encrypted signaling and media, STIR/SHAKEN attestation, and somebody on
+                call around the clock. What we do not have yet is other people&rsquo;s mileage &mdash;
+                so we would rather show you than tell you.
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <Button href="/contact" variant="primary" withArrow>
-                  Request a quote
+                  Request a demo
                 </Button>
                 <Button href="/services" variant="ghost">
                   Explore our services
@@ -112,21 +124,36 @@ export default function HomePage() {
             </div>
           </div>
         </Container>
-
-        {/* Stat strip */}
-        <div className="relative border-t border-white/10">
-          <Container className="grid grid-cols-2 gap-8 py-10 lg:grid-cols-4">
-            {stats.map((s) => (
-              <Stat key={s.label} value={s.value} label={s.label} dark />
-            ))}
-          </Container>
-        </div>
       </section>
+
+      {/* Where we actually are */}
+      <Section tone="muted">
+        <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr]">
+          <div>
+            <Eyebrow>Where we are</Eyebrow>
+            <h2 className="text-3xl font-semibold sm:text-4xl">{startupNote.heading}</h2>
+          </div>
+          <div>
+            <div className="space-y-5">
+              {startupNote.body.map((paragraph) => (
+                <p key={paragraph.slice(0, 32)} className="text-base leading-relaxed text-body">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+            <div className="mt-8">
+              <Button href="/contact" variant="secondary" withArrow>
+                Request a demo
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Section>
 
       {/* Pillars */}
       <Section>
         <SectionHeading
-          eyebrow="Why Cloudpathway"
+          eyebrow="What the platform does"
           title="Phone service is boring infrastructure. That is the point."
           lead="Nobody wants to think about their phone system. Our job is to build one you can stop thinking about — and to pick up quickly on the rare day you have to."
         />
@@ -148,7 +175,7 @@ export default function HomePage() {
         <SectionHeading
           eyebrow="What we do"
           title="Two ways to get your calls onto our network"
-          lead="Most customers land on one of these. If you are not sure which fits, that is exactly what the discovery call is for."
+          lead="Most customers will land on one of these. If you are not sure which fits, that is exactly what the discovery call is for."
         />
 
         <div className="mt-14 grid gap-6 lg:grid-cols-2">
@@ -220,22 +247,22 @@ export default function HomePage() {
         <div className="grid gap-14 lg:grid-cols-[0.9fr_1.1fr]">
           <SectionHeading
             eyebrow="How we're different"
-            title="The things that actually matter when you are the one on the hook"
-            lead="Every provider claims reliability and great support. Here is specifically what we mean by it."
+            title="What we can promise before we have a track record"
+            lead="Every provider claims reliability and great support. We have not earned the right to claim either yet — so here is what we can commit to today, and what we would rather prove in a demo."
           />
           <div className="grid gap-6 sm:grid-cols-2">
-            {differentiators.map((d) => (
-              <div key={d.title}>
-                <h3 className="flex items-start gap-2.5 text-base font-semibold text-strong">
-                  {(() => {
-                    const Icon = differentiatorIcons[d.icon];
-                    return <Icon className="mt-0.5 h-5 w-5 flex-none text-brand-500" />;
-                  })()}
-                  {d.title}
-                </h3>
-                <p className="mt-2.5 text-sm leading-relaxed text-body">{d.body}</p>
-              </div>
-            ))}
+            {differentiators.map((d) => {
+              const Icon = differentiatorIcons[d.icon];
+              return (
+                <div key={d.title}>
+                  <h3 className="flex items-start gap-2.5 text-base font-semibold text-strong">
+                    <Icon className="mt-0.5 h-5 w-5 flex-none text-brand-500" />
+                    {d.title}
+                  </h3>
+                  <p className="mt-2.5 text-sm leading-relaxed text-body">{d.body}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </Section>

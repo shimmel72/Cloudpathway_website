@@ -49,7 +49,7 @@ export default function FeaturesPage() {
 
       <CtaBand
         title="Want to see it running?"
-        body="We will walk you through the admin portal and the softphone with your own call flow on the screen — not a canned demo tenant."
+        body="Demos are available on request. We will build your call flow — your routing, your hours, your failover — and walk you through the admin portal and softphone with it on screen, rather than a canned demo tenant."
       />
     </>
   );

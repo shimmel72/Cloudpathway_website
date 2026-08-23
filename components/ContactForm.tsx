@@ -183,7 +183,7 @@ export function ContactForm() {
           disabled={status === "submitting"}
           className="inline-flex flex-none items-center justify-center rounded-lg bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {status === "submitting" ? "Sending…" : "Request a quote"}
+          {status === "submitting" ? "Sending…" : "Send enquiry"}
         </button>
       </div>
     </form>
