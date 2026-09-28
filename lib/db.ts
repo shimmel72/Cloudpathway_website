@@ -46,6 +46,30 @@ function getDb(): Database.Database {
     );
     CREATE INDEX IF NOT EXISTS idx_leads_created_at ON leads (created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_leads_email ON leads (email);
+
+    CREATE TABLE IF NOT EXISTS reseller_applications (
+      id                INTEGER PRIMARY KEY AUTOINCREMENT,
+      company_name      TEXT NOT NULL,
+      website           TEXT,
+      contact_name      TEXT NOT NULL,
+      contact_email     TEXT NOT NULL,
+      contact_phone     TEXT,
+      brand_name        TEXT,
+      support_email     TEXT,
+      support_phone     TEXT,
+      business_type     TEXT NOT NULL,
+      current_customers TEXT,
+      expected_seats    TEXT,
+      sells_voice_today TEXT NOT NULL,
+      territory         TEXT,
+      notes             TEXT NOT NULL,
+      source_page       TEXT,
+      user_agent        TEXT,
+      mail_status       TEXT,
+      created_at        TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_apps_created_at ON reseller_applications (created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_apps_email ON reseller_applications (contact_email);
   `);
 
   return db;
@@ -67,6 +91,69 @@ export function recentLeadCount(email: string, windowMinutes = 10): number {
     .prepare(
       `SELECT COUNT(*) AS count FROM leads
        WHERE email = ? AND created_at >= datetime('now', ?)`,
+    )
+    .get(email, `-${windowMinutes} minutes`) as { count: number };
+  return row.count;
+}
+
+/* ------------------------------------------------------------------------ */
+/* Reseller applications                                                    */
+/* ------------------------------------------------------------------------ */
+
+export type ResellerApplicationRecord = {
+  companyName: string;
+  website: string | null;
+  contactName: string;
+  contactEmail: string;
+  contactPhone: string | null;
+  brandName: string | null;
+  supportEmail: string | null;
+  supportPhone: string | null;
+  businessType: string;
+  currentCustomers: string | null;
+  expectedSeats: string | null;
+  sellsVoiceToday: string;
+  territory: string | null;
+  notes: string;
+  sourcePage: string | null;
+  userAgent: string | null;
+};
+
+export function insertResellerApplication(app: ResellerApplicationRecord): number {
+  const result = getDb()
+    .prepare(
+      `INSERT INTO reseller_applications
+         (company_name, website, contact_name, contact_email, contact_phone,
+          brand_name, support_email, support_phone, business_type, current_customers,
+          expected_seats, sells_voice_today, territory, notes, source_page, user_agent)
+       VALUES
+         (@companyName, @website, @contactName, @contactEmail, @contactPhone,
+          @brandName, @supportEmail, @supportPhone, @businessType, @currentCustomers,
+          @expectedSeats, @sellsVoiceToday, @territory, @notes, @sourcePage, @userAgent)`,
+    )
+    .run(app);
+  return Number(result.lastInsertRowid);
+}
+
+/**
+ * Records what happened to the notification email.
+ *
+ * Kept on the row rather than only in the log, so an application whose email
+ * failed can be found later. The application itself is never rejected because
+ * mail is down — the row is committed first.
+ */
+export function setApplicationMailStatus(id: number, status: string): void {
+  getDb()
+    .prepare("UPDATE reseller_applications SET mail_status = ? WHERE id = ?")
+    .run(status.slice(0, 500), id);
+}
+
+/** Submissions from one email in the trailing window — basic abuse throttling. */
+export function recentApplicationCount(email: string, windowMinutes = 30): number {
+  const row = getDb()
+    .prepare(
+      `SELECT COUNT(*) AS count FROM reseller_applications
+       WHERE contact_email = ? AND created_at >= datetime('now', ?)`,
     )
     .get(email, `-${windowMinutes} minutes`) as { count: number };
   return row.count;

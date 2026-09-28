@@ -1,0 +1,105 @@
+diff --git a/web/src/pages/Resellers.tsx b/web/src/pages/Resellers.tsx
+index 87fd5ba..4fabb9b 100644
+--- a/web/src/pages/Resellers.tsx
++++ b/web/src/pages/Resellers.tsx
+@@ -1,5 +1,5 @@
+ import { useEffect, useState } from 'react';
+-import { Link } from 'react-router-dom';
++import { Link, useSearchParams } from 'react-router-dom';
+ import { useQuery } from '@tanstack/react-query';
+ import { api } from '../lib/api';
+ import { del, patch, post, useAction } from '../lib/hooks';
+@@ -43,9 +43,54 @@ function rateSummary(model: string | null, rate: number | null) {
+   return `${rate}%`;
+ }
+ 
++/**
++ * The fields an outside application is allowed to fill in.
++ *
++ * A whitelist, not a spread. The commercial terms -- reseller_plan_id,
++ * wholesale_discount_pct, margin_cents -- are picked with the reseller and
++ * must never arrive in a link, or a crafted URL becomes a way to propose your
++ * own margin and have somebody save it without looking. Same reason there is
++ * no admin_password here: a credential does not belong in a URL.
++ */
++const IMPORTABLE = [
++  'name', 'slug', 'brand_name', 'support_email', 'support_phone',
++  'admin_name', 'admin_email',
++] as const;
++
++/** `?import=` from the website's reseller application email, or null. */
++function decodeImport(token: string | null): Record<string, string> | null {
++  if (!token) return null;
++  try {
++    const json = atob(token.replace(/-/g, '+').replace(/_/g, '/'));
++    const raw = JSON.parse(decodeURIComponent(escape(json))) as Record<string, unknown>;
++    const out: Record<string, string> = {};
++    for (const key of IMPORTABLE) {
++      if (typeof raw[key] === 'string' && raw[key]) out[key] = raw[key] as string;
++    }
++    return out.name ? out : null;
++  } catch {
++    // A truncated or mangled link should open an empty form, not a crash.
++    return null;
++  }
++}
++
+ export function Resellers() {
+   const [editing, setEditing] = useState<Reseller | null>(null);
+   const [creating, setCreating] = useState(false);
++  const [params, setParams] = useSearchParams();
++  const [prefill, setPrefill] = useState<Record<string, string> | null>(null);
++
++  // Arriving from a reseller application email. The token is read once and
++  // dropped from the URL so a refresh does not reopen the form, and so the
++  // applicant's details do not sit in the address bar afterwards.
++  useEffect(() => {
++    const incoming = decodeImport(params.get('import'));
++    if (!incoming) return;
++    setPrefill(incoming);
++    setCreating(true);
++    params.delete('import');
++    setParams(params, { replace: true });
++  }, [params, setParams]);
+ 
+   const { data: resellers = [], isLoading } = useQuery({
+     queryKey: ['resellers'],
+@@ -168,9 +213,11 @@ export function Resellers() {
+       {(creating || editing) && (
+         <ResellerModal
+           reseller={editing}
++          prefill={editing ? null : prefill}
+           onClose={() => {
+             setCreating(false);
+             setEditing(null);
++            setPrefill(null);
+           }}
+         />
+       )}
+@@ -178,7 +225,15 @@ export function Resellers() {
+   );
+ }
+ 
+-function ResellerModal({ reseller, onClose }: { reseller: Reseller | null; onClose: () => void }) {
++function ResellerModal({
++  reseller,
++  onClose,
++  prefill,
++}: {
++  reseller: Reseller | null;
++  onClose: () => void;
++  prefill?: Record<string, string> | null;
++}) {
+   const [form, setForm] = useState<any>(
+     reseller ?? {
+       name: '',
+@@ -193,6 +248,9 @@ function ResellerModal({ reseller, onClose }: { reseller: Reseller | null; onClo
+       admin_email: '',
+       admin_name: '',
+       admin_password: '',
++      // Applied last so an imported application fills the blanks above it.
++      // Never the agreement or the password: both are chosen here.
++      ...(prefill ?? {}),
+     },
+   );
+   const set = (p: any) => setForm((f: any) => ({ ...f, ...p }));

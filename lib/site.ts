@@ -53,6 +53,7 @@ export const startupNote = {
 export const nav = [
   { href: "/services", label: "Services" },
   { href: "/features", label: "Features" },
+  { href: "/resellers", label: "Resellers" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ] as const;

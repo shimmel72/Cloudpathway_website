@@ -45,6 +45,8 @@ npm run typecheck  # tsc --noEmit
 | `/services` | SIP trunking and hosted PBX in depth, comparison table, migration process |
 | `/features` | Full feature catalogue across five categories |
 | `/about` | Who we are, values, network infrastructure, how we work |
+| `/resellers` | Reseller programme: what a reseller does, what we handle, FAQ |
+| `/resellers/apply` | Reseller application form (noindex) |
 | `/contact` | Quote request form and FAQ |
 
 ## Contact API
@@ -77,10 +79,32 @@ Responses:
 Abuse handling: a hidden `website` honeypot field (bots fill it, humans never see it) and a
 per-email rate limit. Honeypot hits get a fake success so bots do not learn they were caught.
 
+## Reseller applications
+
+`POST /api/reseller-application` stores the application, then emails it to the address in
+`RESELLER_APPLICATION_TO` (default `12shimmel@gmail.com`) through **Telnyx** — the same
+transport and the same API key the PhoneSystem portal uses. The email carries an
+**Import into the portal** button that opens the portal's Resellers page with the
+applicant's details pre-filled.
+
+```bash
+TELNYX_API_KEY=...                   # same key the phone system uses
+MAIL_FROM=Cloudpathway <no-reply@cloudpathway.org>
+PORTAL_URL=https://portal.cloudpathway.org
+RESELLER_APPLICATION_TO=12shimmel@gmail.com   # optional
+```
+
+The application row is committed **before** mail is attempted, and a send failure is
+recorded in `mail_status` rather than shown to the applicant — a filled-in form is never
+lost to a mail misconfiguration.
+
+Full detail, including the one-file patch the portal needs to consume the import link:
+**[`docs/reseller-applications.md`](docs/reseller-applications.md)**.
+
 ## Data
 
-Leads land in the `leads` table in `data/cloudpathway.db`, created automatically on first
-submission. The path is overridable with `CLOUDPATHWAY_DB_PATH`. The `data/` directory is
+Leads land in the `leads` table in `data/cloudpathway.db`, and reseller applications in
+`reseller_applications`. Both are created automatically on first submission. The path is overridable with `CLOUDPATHWAY_DB_PATH`. The `data/` directory is
 gitignored — this is real customer data, so back it up wherever this is deployed.
 
 Read recent leads:

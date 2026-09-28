@@ -47,6 +47,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/resellers" className="text-body transition-colors hover:text-strong">
+                  Become a reseller
+                </Link>
+              </li>
+              <li>
                 <Link href="/about#process" className="text-body transition-colors hover:text-strong">
                   How we work
                 </Link>
