@@ -25,15 +25,18 @@ Marketing pages are statically prerendered; only `/api/contact` runs per-request
 ## Deploying
 
 To a server that already runs nginx (built for the same CentOS Stream 10 host as the
-PhoneSystem portal):
+PhoneSystem portal, behind its Cloudflare tunnel):
 
 ```bash
-sudo ./deploy/install.sh install --domain cloudpathway.org --dry-run   # look first
-sudo ./deploy/install.sh install --domain cloudpathway.org --import-phonesystem-env
+sudo bash deploy/install.sh install --domain cloudpathway.org --dry-run   # look first
+sudo bash deploy/install.sh install --domain cloudpathway.org --import-phonesystem-env
 ```
 
-It takes over the domain from whatever serves it today, keeps its TLS certificate, and
-can be undone with `rollback` or `restore-old-site`. Full guide: **[`docs/deploy.md`](docs/deploy.md)**.
+It takes over the domain from whatever serves it today and serves it the same way:
+through the tunnel when there is one, with the current site's certificate when it has
+one, never adding HTTPS or relying on a certificate that cannot renew itself. It checks
+the result from the internet's side, puts nginx back if that fails, and can be undone
+with `rollback` or `restore-old-site`. Full guide: **[`docs/deploy.md`](docs/deploy.md)**.
 
 ## Getting started
 

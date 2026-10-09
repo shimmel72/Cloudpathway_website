@@ -107,12 +107,23 @@ saves gets the same minute of typing back without that trade.
 
 `PORTAL_URL` can be set before the portal understands `?import=` — the link simply
 lands on the Resellers page, and every field is in the email body to copy from. To
-make the button pre-fill the form, apply the patch in this directory:
+make the button pre-fill the form, apply the patch in this directory **in a
+development clone of PhoneSystem**, commit and push it, then update the portal the
+usual way:
 
 ```bash
-cd /path/to/PhoneSystem
+cd /path/to/PhoneSystem            # a development clone, not /opt/phonesystem/app
 git apply /path/to/Cloudpathway_website/docs/phonesystem-reseller-import.patch
+git commit -am "Resellers: prefill the create form from a website application"
+git push
+# then, on the server:
+sudo /opt/phonesystem/app/scripts/update.sh
 ```
+
+Not on the server's checkout directly. The portal serves a built bundle, so an
+edited source does nothing until a rebuild, and `update.sh` (`pull --ff-only`)
+stops pulling over a locally edited file. [`deploy.md`](deploy.md#5-the-portals-import-button)
+has the undo if that has already happened.
 
 It touches one file, `web/src/pages/Resellers.tsx` (+60 −2), and follows the
 `useSearchParams` pattern already used by Quotes, Customers and Plans in that
