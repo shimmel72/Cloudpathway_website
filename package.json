@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "better-sqlite3": "^12.11.1",
-    "next": "^15.1.6",
+    "next": "^15.5.27",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "zod": "^3.24.1"
@@ -30,7 +30,11 @@
     "node": ">=20.9.0"
   },
   "allowScripts": {
-    "better-sqlite3@12.11.1": true,
-    "sharp@0.34.5": true
+    "better-sqlite3@12.11.1": true
+  },
+  "overrides": {
+    "postcss": "^8.5.29",
+    "sharp": "^0.35.5",
+    "source-map-js": "^1.2.2"
   }
 }

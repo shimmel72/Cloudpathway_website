@@ -15,6 +15,10 @@ const nextConfig = {
   // The site is behind nginx, which already announces itself; this one only
   // tells a visitor which framework to probe.
   poweredByHeader: false,
+  // The site has no next/image, so the image optimizer (/_next/image) has
+  // nothing to do. Off here, and blocked in nginx too: it is the one endpoint
+  // that decodes untrusted image formats, and it has had critical advisories.
+  images: { unoptimized: true },
 };
 
 export default nextConfig;

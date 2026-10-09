@@ -331,6 +331,12 @@ test("render: HSTS in tls mode by default, and not when the certificate cannot r
   assert.match(off, /return 301 https:\/\/cloudpathway\.org\$request_uri;/); // still TLS, just no HSTS
 });
 
+test("render blocks the unused image optimizer in every mode", () => {
+  const p = plan(dump({ "/etc/nginx/nginx.conf": EL_NGINX_CONF, "/etc/nginx/conf.d/c.conf": CERTBOT_SITE,
+    "/etc/letsencrypt/options-ssl-nginx.conf": LE_OPTIONS }), opts);
+  for (const mode of ["tls", "http", "tunnel"]) assert.match(render(p, { port: 3100, nginxVersion: "1.26.3", mode }), /location \^~ \/_next\/image \{\s*return 404;/);
+});
+
 test("render always sets X-Real-IP (the health endpoint's privacy depends on it), in every mode", () => {
   const p = plan(dump({ "/etc/nginx/nginx.conf": EL_NGINX_CONF, "/etc/nginx/conf.d/c.conf": CERTBOT_SITE,
     "/etc/letsencrypt/options-ssl-nginx.conf": LE_OPTIONS }), opts);
