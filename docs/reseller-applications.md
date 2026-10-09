@@ -81,7 +81,6 @@ Only these fields travel:
 | Application field | Portal field |
 | --- | --- |
 | Company name | `name` |
-| (derived) | `slug` |
 | Brand name, or company name | `brand_name` |
 | Support email, or contact email | `support_email` |
 | Support phone, or contact phone | `support_phone` |

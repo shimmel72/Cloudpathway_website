@@ -12,7 +12,92 @@
  */
 import fs from "node:fs";
 
-/** dotenv / EnvironmentFile parser. Later assignments win, as both readers do. */
+/**
+ * systemd's EnvironmentFile reader, ported state for state from
+ * parse_env_file_internal() (src/basic/env-file.c). This is what the service
+ * actually receives, so it is what test-mail and `check` must use for
+ * /etc/cloudpathway-web/env. Notably, unlike dotenv:
+ *   - an unquoted value keeps `#` and everything after it (no inline comments);
+ *   - after a closing quote, whitespace is skipped and any further text is
+ *     APPENDED: 'a'  # note  ->  a# note
+ *   - single quotes are verbatim; double quotes honour \" \\ \` \$ and line
+ *     continuations; outside quotes a backslash escapes the next character.
+ * Later assignments win.
+ */
+export function parseSystemdEnv(text) {
+  const out = new Map();
+  const isWs = (c) => c === " " || c === "\t" || c === "\r";
+  let state = "PRE_KEY";
+  let key = "";
+  let value = "";
+  let trailingWs = 0; // whitespace appended in VALUE that may turn out to be trailing
+  const finish = () => {
+    if (key) out.set(key, trailingWs ? value.slice(0, value.length - trailingWs) : value);
+    key = ""; value = ""; trailingWs = 0;
+  };
+  for (let i = 0; i <= text.length; i++) {
+    const c = i < text.length ? text[i] : "\n";
+    switch (state) {
+      case "PRE_KEY":
+        if (c === "#" || c === ";") state = "COMMENT";
+        else if (!isWs(c) && c !== "\n") { state = "KEY"; key = c; }
+        break;
+      case "KEY":
+        if (c === "\n") { state = "PRE_KEY"; key = ""; }
+        else if (c === "=") { state = "PRE_VALUE"; key = key.trim(); }
+        else key += c;
+        break;
+      case "PRE_VALUE":
+        if (c === "\n") { finish(); state = "PRE_KEY"; }
+        else if (c === "'") state = "SQ";
+        else if (c === '"') state = "DQ";
+        else if (c === "\\") state = "VALUE_ESCAPE";
+        else if (!isWs(c)) { state = "VALUE"; value += c; trailingWs = 0; }
+        break;
+      case "VALUE":
+        if (c === "\n") { finish(); state = "PRE_KEY"; }
+        else if (c === "\\") { state = "VALUE_ESCAPE"; trailingWs = 0; }
+        else { value += c; trailingWs = isWs(c) ? trailingWs + 1 : 0; }
+        break;
+      case "VALUE_ESCAPE":
+        state = "VALUE";
+        if (c !== "\n") { value += c; trailingWs = 0; }
+        break;
+      case "SQ":
+        if (c === "'") state = "PRE_VALUE";
+        else value += c;
+        break;
+      case "DQ":
+        if (c === '"') state = "PRE_VALUE";
+        else if (c === "\\") state = "DQ_ESCAPE";
+        else value += c;
+        break;
+      case "DQ_ESCAPE":
+        state = "DQ";
+        if ('"\\`$'.includes(c)) value += c;
+        else if (c !== "\n") value += "\\" + c;
+        break;
+      case "COMMENT":
+        if (c === "\\") state = "COMMENT_ESCAPE";
+        else if (c === "\n") state = "PRE_KEY";
+        break;
+      case "COMMENT_ESCAPE":
+        state = "COMMENT";
+        break;
+    }
+  }
+  if (state === "VALUE" || state === "PRE_VALUE") finish();
+  return out;
+}
+
+export function parseSystemdEnvFile(path) {
+  return parseSystemdEnv(fs.readFileSync(path, "utf8"));
+}
+
+/**
+ * dotenv reader — for PhoneSystem's server/.env ONLY, which is read by dotenv,
+ * not systemd. Never use it for the website's EnvironmentFile.
+ */
 export function parseEnv(text) {
   const out = new Map();
   for (const raw of text.split(/\r?\n/)) {
@@ -70,9 +155,19 @@ const sendable = (addr) => {
   return domain.includes(".") && !domain.endsWith(".localhost") && !/example\.(com|org|net)$/.test(domain);
 };
 
-export function check(env) {
+export function check(env, raw = null) {
   const notes = [];
   const say = (level, msg) => notes.push({ level, msg });
+  // Where what the operator wrote (as dotenv would read it) is not what systemd
+  // will hand the service, say so — that difference is invisible otherwise.
+  if (raw) {
+    const intended = parseEnv(raw);
+    for (const [k, v] of env) {
+      if (intended.has(k) && intended.get(k) !== v) {
+        say("WARN", `${k}: systemd will deliver ${JSON.stringify(v)} — put comments on their own line, and nothing after a closing quote`);
+      }
+    }
+  }
   const key = env.get("TELNYX_API_KEY") ?? "";
   const from = env.get("MAIL_FROM") ?? "";
   const portal = env.get("PORTAL_URL") ?? "";
@@ -100,8 +195,8 @@ export function check(env) {
  * overwrites a value that is already set — run it twice and nothing changes.
  */
 export function importPhonesystem(fromPath, toPath) {
-  const ps = parseEnvFile(fromPath);
-  const ours = fs.existsSync(toPath) ? parseEnvFile(toPath) : new Map();
+  const ps = parseEnvFile(fromPath);            // PhoneSystem's .env: dotenv
+  const ours = fs.existsSync(toPath) ? parseSystemdEnvFile(toPath) : new Map(); // ours: systemd
   const updates = {};
   const report = [];
   const offer = (key, value, label) => {
@@ -135,11 +230,16 @@ if (isMain) {
   const cmd = process.argv[2];
   try {
     if (cmd === "check") {
-      for (const { level, msg } of check(parseEnvFile(opt("env")))) console.log(`  ${level.padEnd(4)} ${msg}`);
+      const raw = fs.readFileSync(opt("env"), "utf8");
+      for (const { level, msg } of check(parseSystemdEnv(raw), raw)) console.log(`  ${level.padEnd(4)} ${msg}`);
+    } else if (cmd === "export") {
+      // The service's environment exactly as systemd will build it, as JSON —
+      // piped to test-mail so the secret never appears on a command line.
+      process.stdout.write(JSON.stringify(Object.fromEntries(parseSystemdEnvFile(opt("env")))));
     } else if (cmd === "import-phonesystem") {
       for (const line of importPhonesystem(opt("from"), opt("to"))) console.log(`  ${line}`);
     } else {
-      console.error("usage: env-tool.mjs check --env FILE | import-phonesystem --from PS_ENV --to FILE");
+      console.error("usage: env-tool.mjs check --env FILE | export --env FILE | import-phonesystem --from PS_ENV --to FILE");
       process.exit(2);
     }
   } catch (err) {

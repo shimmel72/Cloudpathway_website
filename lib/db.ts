@@ -28,9 +28,24 @@ function getDb(): Database.Database {
 
   fs.mkdirSync(path.dirname(dbPath), { recursive: true });
 
-  db = new Database(dbPath);
-  db.pragma("journal_mode = WAL");
-  db.exec(`
+  // Cached only once the schema is in place. If any step throws (disk full, a
+  // read-only directory), the next request retries from scratch instead of
+  // being handed a handle with no tables, which would fail every query until
+  // the service restarted.
+  const handle = new Database(dbPath);
+  try {
+    initSchema(handle);
+  } catch (err) {
+    handle.close();
+    throw err;
+  }
+  db = handle;
+  return db;
+}
+
+function initSchema(handle: Database.Database): void {
+  handle.pragma("journal_mode = WAL");
+  handle.exec(`
     CREATE TABLE IF NOT EXISTS leads (
       id           INTEGER PRIMARY KEY AUTOINCREMENT,
       name         TEXT NOT NULL,
@@ -71,8 +86,6 @@ function getDb(): Database.Database {
     CREATE INDEX IF NOT EXISTS idx_apps_created_at ON reseller_applications (created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_apps_email ON reseller_applications (contact_email);
   `);
-
-  return db;
 }
 
 export function insertLead(lead: LeadRecord): number {

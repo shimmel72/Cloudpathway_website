@@ -140,17 +140,6 @@ export type ResellerApplication = {
   notes: string;
 };
 
-/** The portal's own slug rule, from `server/src/lib/slug.js` in PhoneSystem. */
-export function slugify(value: string): string {
-  return String(value ?? "")
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 48);
-}
-
 /**
  * The subset of the portal's reseller fields an application can safely fill.
  *
@@ -158,12 +147,12 @@ export function slugify(value: string): string {
  * `margin_cents`: the portal's own code says the commercial agreement is
  * "picked with them; it is not self-serve", and an applicant should not be
  * able to propose their own margin by editing a form. `admin_password` is
- * omitted too — a credential does not belong in a URL or an inbox.
+ * omitted too — a credential does not belong in a URL or an inbox. No `slug`
+ * either: the portal derives a unique one itself when the form is saved.
  */
 export function portalPrefill(app: ResellerApplication): Record<string, string> {
   return {
     name: app.companyName,
-    slug: slugify(app.companyName),
     brand_name: app.brandName || app.companyName,
     support_email: app.supportEmail || app.contactEmail,
     support_phone: app.supportPhone || app.contactPhone || "",

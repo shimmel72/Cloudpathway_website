@@ -2,8 +2,14 @@
 /**
  * Send one real message through Telnyx with the website's own mail code.
  *
- *   sudo node deploy/test-mail.mjs --env /etc/cloudpathway-web/env --to you@example.com \
+ *   node deploy/test-mail.mjs --env /etc/cloudpathway-web/env --to you@example.com \
  *        [--app /opt/cloudpathway-web/current]
+ *   … | node deploy/test-mail.mjs --env - --to you@example.com   # env as JSON on stdin
+ *
+ * `install.sh test-mail` uses the second form: root reads the env file and
+ * pipes it in, and this runs as the service account — so neither the app's
+ * code nor anything it imports runs as root, and the API key never appears
+ * on a command line.
  *
  * It imports the deployed release's lib/mailer.ts (Node strips the types) and
  * calls the same sendMail() the reseller form calls, so a pass proves the
@@ -12,7 +18,8 @@
  */
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { parseEnvFile } from "./lib/env-tool.mjs";
+import fs from "node:fs";
+import { parseSystemdEnvFile } from "./lib/env-tool.mjs";
 
 const args = process.argv.slice(2);
 const opt = (n, d) => { const i = args.indexOf(`--${n}`); return i >= 0 ? args[i + 1] : d; };
@@ -25,12 +32,16 @@ if (!to || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)) {
   process.exit(2);
 }
 
-for (const [k, v] of parseEnvFile(envFile)) process.env[k] = v;
+// Read exactly as systemd builds the service's environment from the same file.
+const env = envFile === "-"
+  ? Object.entries(JSON.parse(fs.readFileSync(0, "utf8")))
+  : [...parseSystemdEnvFile(envFile)];
+for (const [k, v] of env) process.env[k] = String(v);
 
 const { sendMail, describeMail, mailConfigured } = await import(pathToFileURL(path.join(app, "lib/mailer.ts")).href);
 console.log(`transport: ${describeMail()}`);
 if (!mailConfigured()) {
-  console.error(`not configured — fix ${envFile} first`);
+  console.error(`not configured — fix ${envFile === "-" ? "the env file" : envFile} first`);
   process.exit(1);
 }
 try {

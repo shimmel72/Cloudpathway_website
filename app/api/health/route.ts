@@ -33,17 +33,19 @@ const LOOPBACK = new Set(["127.0.0.1", "::1", "::ffff:127.0.0.1"]);
  * `next start` synthesises that header itself, as 127.0.0.1, on every direct
  * request (verified against Next 15.5). What it never adds is X-Real-IP, and
  * the nginx vhost in deploy/ always sets X-Real-IP, overwriting anything a
- * client sent. So: no X-Real-IP, and Next's own X-Forwarded-For is loopback.
- * Any proxy put in front of this app must set X-Real-IP too, or it inherits
- * the detailed view.
+ * client sent. So: no X-Real-IP, and X-Forwarded-For is exactly one loopback
+ * address. Exactly one, because Next fills the header in only when it is
+ * absent, and a proxy that appends to whatever the client sent would pass on
+ * "127.0.0.1, <client>" — a first entry the client chose. Any proxy put in
+ * front of this app must set X-Real-IP too, or it inherits the detailed view.
  */
 export async function GET(request: Request) {
   const db = dbHealth();
   const ok = db.ok;
   const status = ok ? 200 : 503;
 
-  const forwardedFor = (request.headers.get("x-forwarded-for") ?? "").split(",")[0].trim();
-  const direct = !request.headers.get("x-real-ip") && LOOPBACK.has(forwardedFor);
+  const forwardedFor = (request.headers.get("x-forwarded-for") ?? "").trim();
+  const direct = !request.headers.get("x-real-ip") && !forwardedFor.includes(",") && LOOPBACK.has(forwardedFor);
   if (!direct) {
     return NextResponse.json({ ok }, { status, headers: { "cache-control": "no-store" } });
   }
