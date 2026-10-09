@@ -1,4 +1,4 @@
-import { telnyxBody, usableSendingFrom, type MailMessage } from "./telnyx-mail";
+import { telnyxBody, usableSendingFrom, type MailMessage } from "./telnyx-mail.ts";
 
 /**
  * Sending mail through Telnyx, the same transport the PhoneSystem portal uses.

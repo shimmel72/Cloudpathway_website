@@ -1,0 +1,54 @@
+# Cloudpathway website. Rendered by deploy/install.sh — edit the template in
+# the repo, not this copy; the installer rewrites it on every run.
+[Unit]
+Description=Cloudpathway website (Next.js)
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=120
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=@@USER@@
+Group=@@USER@@
+# A symlink to the live release. Switching it and restarting is the whole
+# deploy; the previous release stays on disk for `install.sh rollback`.
+WorkingDirectory=@@BASE@@/current
+EnvironmentFile=@@ENV_FILE@@
+Environment=NODE_ENV=production
+Environment=NEXT_TELEMETRY_DISABLED=1
+Environment=CLOUDPATHWAY_DB_PATH=@@BASE@@/data/cloudpathway.db
+# node directly, not `npm start`: systemd then supervises the process that
+# serves traffic, and signals and exit codes are not npm's to swallow.
+# Loopback only — nginx is the only thing that should ever reach it.
+ExecStart=@@NODE@@ @@BASE@@/current/node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port @@PORT@@
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=20
+UMask=0027
+
+# The release is read-only to the service; only the database directory is
+# writable. Verified: the site serves, and forms write, with exactly this.
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=@@BASE@@/data
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+RestrictNamespaces=true
+LockPersonality=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+SystemCallArchitectures=native
+CapabilityBoundingSet=
+# Deliberately not MemoryDenyWriteExecute: V8's JIT needs it off.
+
+[Install]
+WantedBy=multi-user.target

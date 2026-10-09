@@ -158,3 +158,28 @@ export function recentApplicationCount(email: string, windowMinutes = 30): numbe
     .get(email, `-${windowMinutes} minutes`) as { count: number };
   return row.count;
 }
+
+/* ------------------------------------------------------------------------ */
+/* Health                                                                    */
+/* ------------------------------------------------------------------------ */
+
+/**
+ * Prove the database can actually be written, not merely opened.
+ *
+ * Opening succeeds on a read-only file; the failure only arrives with the first
+ * lead. Under systemd's ProtectSystem=strict a data directory missing from
+ * ReadWritePaths is exactly that — the site renders, the health check says
+ * "ok", and every form submission 500s. So this writes a row.
+ */
+export function dbHealth(): { ok: boolean; path: string; error?: string } {
+  const dbPath =
+    process.env.CLOUDPATHWAY_DB_PATH ?? path.join(process.cwd(), "data", "cloudpathway.db");
+  try {
+    const conn = getDb();
+    conn.exec("CREATE TABLE IF NOT EXISTS _health (id INTEGER PRIMARY KEY CHECK (id = 1), at TEXT NOT NULL)");
+    conn.prepare("INSERT OR REPLACE INTO _health (id, at) VALUES (1, datetime('now'))").run();
+    return { ok: true, path: dbPath };
+  } catch (error) {
+    return { ok: false, path: dbPath, error: error instanceof Error ? error.message : String(error) };
+  }
+}

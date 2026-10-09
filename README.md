@@ -22,6 +22,19 @@ Marketing and lead-capture site for Cloudpathway — SIP trunking and hosted PBX
 
 Marketing pages are statically prerendered; only `/api/contact` runs per-request.
 
+## Deploying
+
+To a server that already runs nginx (built for the same CentOS Stream 10 host as the
+PhoneSystem portal):
+
+```bash
+sudo ./deploy/install.sh install --domain cloudpathway.org --dry-run   # look first
+sudo ./deploy/install.sh install --domain cloudpathway.org --import-phonesystem-env
+```
+
+It takes over the domain from whatever serves it today, keeps its TLS certificate, and
+can be undone with `rollback` or `restore-old-site`. Full guide: **[`docs/deploy.md`](docs/deploy.md)**.
+
 ## Getting started
 
 ```bash
