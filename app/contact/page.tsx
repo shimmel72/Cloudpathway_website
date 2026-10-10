@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import { faqs } from "@/lib/content";
-import { launch, site } from "@/lib/site";
+import { launch, pageMeta, site } from "@/lib/site";
 import { Clock, Mail, Phone, Pin } from "@/components/Icons";
 import { ContactForm } from "@/components/ContactForm";
 import { Card, Container, Eyebrow, Section, SectionHeading, StatusPill } from "@/components/ui";
 
-export const metadata: Metadata = {
-  title: "Get early access",
-  description: `${site.name} SIP trunking and hosted PBX are in development and available soon. Join the early-access list to hear first, or ask for a demo.`,
-};
+export const metadata: Metadata = pageMeta(
+  "Early access",
+  `${site.name} SIP trunking and hosted PBX are in development and available soon. Join the early-access list to hear first, or ask for a demo.`,
+  "/contact",
+);
 
 export default function ContactPage() {
   return (
@@ -66,7 +67,7 @@ export default function ContactPage() {
                     <a href={`mailto:${site.supportEmail}`} className="font-semibold text-strong hover:underline">
                       {site.supportEmail}
                     </a>
-                    <span className="mt-0.5 block text-faint">Support</span>
+                    <span className="mt-0.5 block text-faint">Customer support (from launch)</span>
                   </span>
                 </li>
                 <li className="flex items-start gap-3">

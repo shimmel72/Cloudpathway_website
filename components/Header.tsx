@@ -56,7 +56,7 @@ export function Header() {
               href={launch.cta.href}
               className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
             >
-              {launch.cta.label}
+              {launch.cta.short}
             </Link>
           </div>
 

@@ -72,9 +72,9 @@ export default function HomePage() {
 
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-300">
                 {site.name} SIP trunking and hosted PBX are in development and will be available
-                soon. We are building on geographically redundant call routing, encrypted signaling
-                and media, STIR/SHAKEN attestation, and somebody on call around the clock. Join the
-                early-access list and you will hear the moment it is ready.
+                soon. We are building them on geographically redundant call routing, with encrypted
+                signaling and media, STIR/SHAKEN attestation, and somebody on call around the clock.
+                Join the early-access list and you will hear the moment they are ready.
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -111,7 +111,7 @@ export default function HomePage() {
                       </span>
                       <div>
                         <h2 className="flex flex-wrap items-center gap-2 text-base font-semibold text-white">
-                          {service.name}
+                          {service.name}{" "}
                           <span className="rounded-full border border-accent-400/40 px-2 py-0.5 text-[0.7rem] font-medium uppercase tracking-[0.08em] text-accent-300">
                             Coming soon
                           </span>
@@ -180,7 +180,7 @@ export default function HomePage() {
         <SectionHeading
           eyebrow="What's coming"
           title="Two ways to get your calls onto our network"
-          lead="Both are in development and will launch together. If you are not sure which will fit, tell us what you run today and we will say."
+          lead="Both are in development and will be available soon. If you are not sure which will fit, tell us what you run today and we will say."
         />
 
         <div className="mt-14 grid gap-6 lg:grid-cols-2">

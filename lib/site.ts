@@ -22,7 +22,7 @@ export const site = {
   url: "https://info.cloudpathway.org",
   tagline: "Enterprise-grade business voice, coming soon",
   description:
-    "Cloudpathway is building SIP trunking and hosted PBX on enterprise-grade infrastructure. The service is in development and will be available soon — join the early-access list to hear first.",
+    "Cloudpathway SIP trunking and hosted PBX are in development and will be available soon. Join the early-access list to hear first, or ask for a demo.",
 
   phone: "+1 (740) 730-9700",
   phoneHref: "tel:+17407309700",
@@ -37,7 +37,7 @@ export const site = {
     zip: "80202",
     country: "USA",
   },
-  supportHours: "On call around the clock for outages",
+  supportHours: "Round-the-clock on-call for outages, from launch",
   // --- end placeholders ---
 } as const;
 
@@ -50,7 +50,7 @@ export const startupNote = {
   body: [
     "Cloudpathway SIP trunking and hosted PBX are being built now, and they are not available to buy yet. We will open them up soon — and the people on the early-access list hear first.",
     "It is not a side project. The platform is being built on geographically redundant call routing, with encrypted signaling and media, STIR/SHAKEN attestation, and somebody on call around the clock. What it does not have yet is customers, and we would rather say so plainly.",
-    "Join the early-access list and we will tell you the moment it is ready. If you would like to see the platform as it stands, ask for a demo.",
+    "If you would like to see the platform before launch, ask for a demo — we will build your call flow so you can test it yourself.",
   ],
 } as const;
 
@@ -60,9 +60,29 @@ export const startupNote = {
  */
 export const launch = {
   label: "In development · available soon",
-  banner: "Cloudpathway is in development — SIP trunking and hosted PBX will be available soon.",
-  cta: { href: "/contact", label: "Get early access" },
+  banner: {
+    status: "In development",
+    long: "SIP trunking and hosted PBX will be available soon.",
+    short: "Available soon.",
+  },
+  // What the form actually does: a list we tell first, plus demos on request.
+  // `short` is for the header button, where space is tight.
+  cta: { href: "/contact", label: "Join the early-access list", short: "Get notified" },
 } as const;
+
+/**
+ * Metadata for an inner page. Next replaces, rather than merges, a parent's
+ * openGraph, so each page sets its own — otherwise every share preview shows
+ * the home page's title, description and URL.
+ */
+export function pageMeta(title: string, description: string, path: string) {
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: { type: "website" as const, siteName: site.name, title: `${title} · ${site.name}`, description, url: path },
+  };
+}
 
 export const nav = [
   { href: "/services", label: "Services" },

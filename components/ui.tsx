@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { launch } from "@/lib/site";
 import { ArrowRight, Check } from "./Icons";
 
 export function Container({ children, className = "" }: { children: ReactNode; className?: string }) {
@@ -148,7 +149,7 @@ export function StatusPill({ children, dark = false }: { children: ReactNode; da
           : "border-accent-500/30 bg-accent-500/10 text-accent-700 dark:text-accent-300"
       }`}
     >
-      <span className="relative flex h-1.5 w-1.5">
+      <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-400 opacity-60 motion-reduce:hidden" />
         <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent-400" />
       </span>
@@ -159,7 +160,7 @@ export function StatusPill({ children, dark = false }: { children: ReactNode; da
 
 export function CtaBand({
   title = "Be first in line when we launch.",
-  body = "Cloudpathway is in development and will be available soon. Tell us what you run today and we will let you know the moment it is ready — and show you a demo before then, if you would like one.",
+  body = "Tell us what you run today and we will let you know the moment it is ready — and show you a demo before then, if you would like one.",
 }: {
   title?: string;
   body?: string;
@@ -171,8 +172,8 @@ export function CtaBand({
           <h2 className="text-3xl font-semibold text-white sm:text-4xl">{title}</h2>
           <p className="mt-4 text-lg leading-relaxed text-ink-300">{body}</p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button href="/contact" variant="primary" withArrow>
-              Get early access
+            <Button href={launch.cta.href} variant="primary" withArrow>
+              {launch.cta.label}
             </Button>
             <Button href="/services" variant="ghost">
               See what&rsquo;s coming

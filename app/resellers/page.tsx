@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { beforeYouApply, goodFit, resellerFaqs, whatAResellerDoes, whatWeDo } from "@/lib/reseller";
-import { site } from "@/lib/site";
+import { launch, pageMeta, site } from "@/lib/site";
 import { Bolt, Check, Chart, Globe, Headset, Shield, Sliders, Users } from "@/components/Icons";
 import {
   Button,
@@ -11,12 +11,14 @@ import {
   Eyebrow,
   Section,
   SectionHeading,
+  StatusPill,
 } from "@/components/ui";
 
-export const metadata: Metadata = {
-  title: "Resellers",
-  description: `Resell ${site.name} SIP trunking and hosted PBX under your own brand. You own the customer, the pricing and the relationship; we run the network. In development, available soon — applications open now.`,
-};
+export const metadata: Metadata = pageMeta(
+  "Resellers",
+  `Resell ${site.name} SIP trunking and hosted PBX under your own brand. In development and available soon — reseller applications are open now.`,
+  "/resellers",
+);
 
 const doesIcons = [Users, Sliders, Chart, Headset];
 const weDoIcons = [Globe, Bolt, Shield, Check];
@@ -32,10 +34,7 @@ export default function ResellersPage() {
         />
         <Container className="relative py-20 sm:py-24">
           <div className="max-w-3xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-medium text-ink-200">
-              <span className="h-1.5 w-1.5 rounded-full bg-accent-400" />
-              In development &middot; reseller applications open now
-            </span>
+            <StatusPill dark>{launch.label} &middot; reseller applications open</StatusPill>
             <h1 className="mt-6 text-4xl font-semibold leading-[1.08] text-white sm:text-5xl">
               Sell phone service under your own name. We&rsquo;ll run the{" "}
               <span className="bg-gradient-to-r from-brand-300 to-accent-300 bg-clip-text text-transparent">
@@ -47,8 +46,8 @@ export default function ResellersPage() {
               Your customers already ask you to fix their phones. This is how you own that instead
               of handing it to a carrier who then owns the relationship. You keep the customer, the
               branding and the margin; we keep the carriers, the redundancy and the on-call rota.
-              {" "}{site.name} is in development and launching soon &mdash; apply now and you are
-              ready to sell on day one.
+              {" "}{site.name} is in development and launching soon &mdash; apply now and, if we are
+              a fit, you can be selling from day one.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Button href="/resellers/apply" variant="primary" withArrow>

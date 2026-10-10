@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { process, services } from "@/lib/content";
-import { launch } from "@/lib/site";
+import { launch, pageMeta } from "@/lib/site";
 import { Cloud, Globe } from "@/components/Icons";
 import {
   Button,
@@ -14,11 +14,11 @@ import {
   StatusPill,
 } from "@/components/ui";
 
-export const metadata: Metadata = {
-  title: "Services",
-  description:
-    "Coming soon from Cloudpathway: SIP trunking to modernise the PBX you already own, and hosted PBX to replace it entirely — with number porting, failover and migration included.",
-};
+export const metadata: Metadata = pageMeta(
+  "Services",
+  "Coming soon from Cloudpathway: SIP trunking to modernise the PBX you already own, and hosted PBX to replace it — porting and migration included.",
+  "/services",
+);
 
 const serviceIcons = {
   "sip-trunking": Globe,
@@ -144,9 +144,9 @@ export default function ServicesPage() {
       {/* Process */}
       <Section tone="muted" id="process">
         <SectionHeading
-          eyebrow="At launch"
+          eyebrow="Getting started"
           title="How a migration will go"
-          lead="Nothing will cut over until you have tested it and picked the window. Your old service stays up the whole time."
+          lead="Discovery calls and demos are available now; the proposal, build and cutover start at launch. Nothing will cut over until you have tested it and picked the window, and your old service will stay up the whole time."
         />
         <ol className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
           {process.map((p) => (

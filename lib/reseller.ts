@@ -34,15 +34,15 @@ export const whatWeDo = [
   },
   {
     title: "We do the porting paperwork",
-    body: "Number ports are the least glamorous part of winning a customer. Send us the bills and the LOAs and we deal with the losing carrier, including the ones that drag their feet.",
+    body: "Number ports are the least glamorous part of winning a customer. Once we launch, send us the bills and the LOAs and we will deal with the losing carrier, including the ones that drag their feet.",
   },
   {
     title: "We provision the hardware",
-    body: "Handsets ship configured against your brand and your customer's dial plan. Your engineer plugs them in; nobody spends an afternoon typing provisioning URLs.",
+    body: "At launch, handsets will ship configured against your brand and your customer's dial plan. Your engineer plugs them in; nobody spends an afternoon typing provisioning URLs.",
   },
   {
     title: "We stay out of your pricing",
-    body: "We tell you the wholesale rate and then leave you alone. There is no MSRP we expect you to hold to, and no house account quietly undercutting you on a deal you sourced.",
+    body: "We will agree the wholesale rate with you and then leave you alone. There is no MSRP we expect you to hold to, and no house account quietly undercutting you on a deal you sourced.",
   },
 ];
 
@@ -62,7 +62,7 @@ export const goodFit = [
  */
 export const beforeYouApply = [
   {
-    title: "We are in development, and so is this programme",
+    title: "The platform is in development, and so is this programme",
     body: "Cloudpathway is not available yet; it launches soon. You would be among the first resellers on the platform, not the hundredth. That means unusual access to the people building it and real influence over the roadmap — and it also means you are taking a bet on a young company. We would rather you weighed that with your eyes open.",
   },
   {
@@ -78,7 +78,7 @@ export const beforeYouApply = [
 export const resellerFaqs = [
   {
     q: "What does it cost to become a reseller?",
-    a: "Nothing to apply, and there is no buy-in fee. You pay wholesale for what your customers actually use. We set the rate with you once we understand the shape of your business — see the note above about commercial terms.",
+    a: "Nothing to apply, and there is no buy-in fee. Once you are selling, you pay wholesale for what your customers actually use. We set the rate with you once we understand the shape of your business — see the note above about commercial terms.",
   },
   {
     q: "Do we need our own carrier or switch?",
@@ -90,7 +90,7 @@ export const resellerFaqs = [
   },
   {
     q: "Can we keep our existing customers on their current numbers?",
-    a: "Yes. Porting will be included, and we run it. Bring us the bills and letters of authorisation and we deal with the losing carrier.",
+    a: "Yes. Porting will be included, and we will run it: once we launch, bring us the bills and letters of authorisation and we will deal with the losing carrier.",
   },
   {
     q: "What happens after we apply?",

@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { featureGroups } from "@/lib/content";
 import { Check } from "@/components/Icons";
-import { launch } from "@/lib/site";
+import { launch, pageMeta } from "@/lib/site";
 import { Container, CtaBand, Eyebrow, Section, SectionHeading, StatusPill } from "@/components/ui";
 
-export const metadata: Metadata = {
-  title: "Features",
-  description:
-    "Auto attendants, call queues, softphones, call recording, reporting, failover, STIR/SHAKEN and more — standard across Cloudpathway SIP trunking and hosted PBX, coming soon.",
-};
+export const metadata: Metadata = pageMeta(
+  "Features",
+  "Coming soon from Cloudpathway: auto attendants, call queues, softphones, recording, reporting, failover and STIR/SHAKEN, standard on every service.",
+  "/features",
+);
 
 export default function FeaturesPage() {
   return (

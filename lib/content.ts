@@ -20,7 +20,7 @@ export const services: Service[] = [
     highlights: [
       {
         title: "Concurrent calls, not fixed lines",
-        body: "Buy the number of simultaneous calls you actually need instead of channels in blocks of 23. Burst above your commitment during busy season and settle up per minute — no truck roll, no new hardware.",
+        body: "You will buy the number of simultaneous calls you actually need instead of channels in blocks of 23. Burst above your commitment during busy season and settle up per minute — no truck roll, no new hardware.",
       },
       {
         title: "Automatic failover that actually fails over",
@@ -28,7 +28,7 @@ export const services: Service[] = [
       },
       {
         title: "Bring your numbers with you",
-        body: "We handle porting end to end, including the paperwork your current carrier would rather you never finish. Main numbers, DID blocks, toll-free, and fax lines all move — and we schedule the cutover for a time that suits you.",
+        body: "We will handle porting end to end, including the paperwork your current carrier would rather you never finish. Main numbers, DID blocks, toll-free, and fax lines all move — and we will schedule the cutover for a time that suits you.",
       },
       {
         title: "Fraud protection on by default",
@@ -172,17 +172,17 @@ export const differentiators = [
   {
     icon: "headset",
     title: "Small enough to reach an engineer",
-    body: "There is no tier-one queue to get past, because there is no tier one. The person who answers can open the platform and look at your call flow while you are still on the line. That is a property of our size, and we intend to protect it as we grow.",
+    body: "There is no tier-one queue to get past, because there is no tier one. Once you are live, the person who answers will be able to open the platform and look at your call flow while you are still on the line. That is a property of our size, and we intend to protect it as we grow.",
   },
   {
     icon: "chart",
     title: "Quotes with no asterisks",
-    body: "Our proposals list every recurring charge, every one-time cost, and every regulatory fee we know about. The number at the bottom is the number on your first invoice.",
+    body: "Our proposals will list every recurring charge, every one-time cost, and every regulatory fee we know about. The number at the bottom will be the number on your first invoice.",
   },
   {
     icon: "globe",
     title: "We do the migration work",
-    body: "Porting, dial plan mapping, handset provisioning, and interoperability testing are part of onboarding — not a professional-services line item you find out about later.",
+    body: "Porting, dial plan mapping, handset provisioning, and interoperability testing will be part of onboarding — not a professional-services line item you find out about later.",
   },
   {
     icon: "sliders",
@@ -194,14 +194,14 @@ export const differentiators = [
 export const process = [
   { step: "01", title: "Discovery call", body: "Thirty minutes on what you run today, what breaks, and what you actually need. No slide deck." },
   { step: "02", title: "Demo on request", body: "We build a working call flow to your requirements and let you test it yourself, before any commitment." },
-  { step: "03", title: "Written proposal", body: "A design and an itemized quote, usually within two business days, including migration steps and timeline." },
-  { step: "04", title: "Build & test", body: "We stand up your dial plan in parallel with your existing service and test it with you before anything cuts over." },
-  { step: "05", title: "Port & go live", body: "Numbers move on a scheduled window with an engineer on the call. Old service stays up until we are all satisfied." },
+  { step: "03", title: "Written proposal", body: "At launch: a design and an itemized quote, including migration steps and timeline." },
+  { step: "04", title: "Build & test", body: "At launch, we will stand up your dial plan in parallel with your existing service and test it with you before anything cuts over." },
+  { step: "05", title: "Port & go live", body: "Numbers will move on a scheduled window with an engineer on the call. Old service stays up until we are all satisfied." },
 ];
 
 export const values = [
   { title: "Say what is actually true", body: "It is genuinely tempting to round a number up on a website. We would rather be the provider whose claims you never have to double-check." },
-  { title: "Answer the phone", body: "We sell telephone service. It would be absurd for us to be hard to reach — so we are not." },
+  { title: "Answer the phone", body: "We are building a telephone service. It would be absurd for us to be hard to reach — so we are not." },
   { title: "Explain the tradeoff", body: "Sometimes the cheaper option is genuinely worse. We would rather tell you why than quietly sell you the wrong thing." },
   { title: "Design for the bad day", body: "Anyone can carry calls when the network is healthy. We plan around the circuit cut and the failed power supply." },
 ];
@@ -217,7 +217,7 @@ export const faqs = [
   },
   {
     q: "You are a new company. Why would we trust you with our phones?",
-    a: "You should not trust us on the strength of a website — ours or anyone else's. What we can offer instead is evidence you can check yourself: a demo built to your requirements that you are free to try to break, a month-to-month term so leaving costs you nothing but the effort of porting, and numbers that remain yours throughout. We would rather earn a small book of customers who can vouch for us than win a large one on claims we cannot back.",
+    a: "You should not trust us on the strength of a website — ours or anyone else's. What we can offer instead is evidence you can check yourself: a demo built to your requirements that you are free to try to break, month-to-month terms from launch so leaving costs you nothing but the effort of porting, and numbers that remain yours throughout. We would rather earn a small book of customers who can vouch for us than win a large one on claims we cannot back.",
   },
   {
     q: "What does \u201centerprise-grade\u201d actually mean here?",
@@ -229,7 +229,7 @@ export const faqs = [
   },
   {
     q: "Can we keep our existing phone numbers?",
-    a: "Yes. Number porting will be included with every service, covering main numbers, DID blocks, toll-free, and fax lines. We handle the paperwork with your current carrier and schedule the cutover with you \u2014 most ports complete in two to four weeks depending on how quickly the losing carrier moves.",
+    a: "Yes. Number porting will be included with every service, covering main numbers, DID blocks, toll-free, and fax lines. We will handle the paperwork with your current carrier and schedule the cutover with you \u2014 ports typically take two to four weeks, depending on how quickly the losing carrier moves.",
   },
   {
     q: "What internet connection do we need?",

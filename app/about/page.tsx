@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { process, values } from "@/lib/content";
-import { launch, site } from "@/lib/site";
+import { launch, pageMeta, site } from "@/lib/site";
 import { Globe, Headset, Shield, Users } from "@/components/Icons";
 import {
   Card,
@@ -13,10 +13,11 @@ import {
   StatusPill,
 } from "@/components/ui";
 
-export const metadata: Metadata = {
-  title: "About",
-  description: `Who ${site.name} is: a new, independent voice provider building SIP trunking and hosted PBX on enterprise-grade infrastructure — in development and available soon.`,
-};
+export const metadata: Metadata = pageMeta(
+  "About",
+  `Who ${site.name} is: a new, independent voice provider whose SIP trunking and hosted PBX are in development and available soon.`,
+  "/about",
+);
 
 const infrastructure = [
   {
@@ -62,7 +63,7 @@ export default function AboutPage() {
               <Eyebrow>About us</Eyebrow>
             </div>
             <h1 className="text-4xl font-semibold sm:text-5xl">
-              We are the phone company you can actually get on the phone
+              We are building the phone company you can actually get on the phone
             </h1>
             <p className="mt-5 text-lg leading-relaxed text-body">
               {site.name} is a new, independent business voice provider. Our SIP trunking and
@@ -95,25 +96,25 @@ export default function AboutPage() {
                 building the platform now, we are confident in the engineering behind it, and we
                 are looking for the first businesses who want to put it to work when it opens.
                 What we will offer those early customers is not a discount in exchange for being
-                guinea pigs. It is unusually direct access to the people who built the thing, and
+                guinea pigs. It is unusually direct access to the people building the thing, and
                 terms that let you leave without penalty if we disappoint you.
               </p>
               <p>
-                We have deliberately kept the business narrow. We do SIP trunking and hosted PBX,
-                and we intend to do them properly. We are not also selling you internet circuits,
-                security cameras, or a productivity suite. That focus is why an engineer here can
-                hold your entire call flow in their head when you ring.
+                We have deliberately kept the business narrow. We will do SIP trunking and hosted
+                PBX, and we intend to do them properly. We will not also be selling you internet
+                circuits, security cameras, or a productivity suite. That focus is why an engineer
+                here will be able to hold your entire call flow in their head when you ring.
               </p>
             </div>
           </div>
 
           <Card className="h-fit">
             <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-faint">
-              What we are building in
+              What we can back up
             </h3>
             <p className="mt-4 text-sm leading-relaxed text-body">
               No uptime percentages or customer counts, because we have not launched yet. These are
-              the capabilities the platform is being built with &mdash; ask for a demo to see them:
+              the capabilities and commitments you can check for yourself &mdash; ask for a demo:
             </p>
             <ul className="mt-5 space-y-3">
               {canBackUp.map((item) => (
@@ -171,7 +172,7 @@ export default function AboutPage() {
       <Section tone="muted">
         <SectionHeading
           eyebrow="The network"
-          title="What sits behind your dial tone"
+          title="What will sit behind your dial tone"
           lead="You should not have to care about any of this. It is here so you can confirm we do — and so you know exactly what to test when we demo it."
         />
         <div className="mt-12 grid gap-6 sm:grid-cols-2">
@@ -209,7 +210,7 @@ export default function AboutPage() {
 
       <CtaBand
         title="Be one of our first customers"
-        body="Cloudpathway is in development and will be available soon. The first call is with someone who can answer technical questions, because that is who you will be working with anyway. Join the early-access list — or ask for a demo, and we will build your call flow so you can try to break it."
+        body="The first call is with someone who can answer technical questions, because that is who you will be working with anyway. Join the early-access list, or ask for a demo and we will build your call flow so you can try to break it."
       />
     </>
   );

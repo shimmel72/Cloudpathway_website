@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { beforeYouApply } from "@/lib/reseller";
-import { site } from "@/lib/site";
+import { pageMeta, site } from "@/lib/site";
 import { Clock, Mail, Phone } from "@/components/Icons";
 import { ResellerApplicationForm } from "@/components/ResellerApplicationForm";
 import { Card, Container, Eyebrow, Section } from "@/components/ui";
 
 export const metadata: Metadata = {
-  title: "Reseller application",
-  description: `Apply to resell ${site.name} SIP trunking and hosted PBX under your own brand.`,
+  ...pageMeta(
+    "Reseller application",
+    `Apply to resell ${site.name} SIP trunking and hosted PBX under your own brand — applications open ahead of launch.`,
+    "/resellers/apply",
+  ),
   robots: { index: false, follow: true },
 };
 
@@ -22,7 +25,7 @@ export default function ResellerApplyPage() {
             <h1 className="text-4xl font-semibold sm:text-5xl">Tell us about your business</h1>
             <p className="mt-5 text-lg leading-relaxed text-body">
               About five minutes. {site.name} is in development and launching soon; applying now
-              means you can be selling on day one. Nothing here commits either of us to anything
+              means that, if we are a fit, you can be selling from day one. Nothing here commits either of us to anything
               &mdash; commercial terms get worked out in a conversation afterwards. Only the starred
               fields are required; the rest just save us a round trip.
             </p>
@@ -58,8 +61,8 @@ export default function ResellerApplyPage() {
                   platform and a conversation about wholesale terms.
                 </li>
                 <li>
-                  <span className="font-semibold text-strong">4.</span> Your branded portal and a
-                  first customer to cut over.
+                  <span className="font-semibold text-strong">4.</span> At launch: your branded
+                  portal and a first customer to cut over.
                 </li>
               </ol>
             </Card>

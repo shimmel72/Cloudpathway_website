@@ -14,15 +14,15 @@ export function AnnouncementBar() {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-400 opacity-60 motion-reduce:hidden" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-accent-400" />
           </span>
-          In development
-        </span>
+          {launch.banner.status}
+        </span>{" "}
         <span className="text-ink-300">
-          <span className="hidden sm:inline">SIP trunking and hosted PBX will be available soon.</span>
-          <span className="sm:hidden">Available soon.</span>
-        </span>
+          <span className="hidden sm:inline">{launch.banner.long}</span>
+          <span className="sm:hidden">{launch.banner.short}</span>
+        </span>{" "}
         <Link
           href={launch.cta.href}
-          className="font-semibold text-accent-300 underline-offset-4 hover:text-accent-400 hover:underline"
+          className="font-semibold text-accent-300 underline underline-offset-4 hover:text-accent-400"
         >
           {launch.cta.label} &rarr;
         </Link>
