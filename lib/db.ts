@@ -57,6 +57,7 @@ function initSchema(handle: Database.Database): void {
       message      TEXT NOT NULL,
       source_page  TEXT,
       user_agent   TEXT,
+      mail_status  TEXT,
       created_at   TEXT NOT NULL DEFAULT (datetime('now'))
     );
     CREATE INDEX IF NOT EXISTS idx_leads_created_at ON leads (created_at DESC);
@@ -86,6 +87,13 @@ function initSchema(handle: Database.Database): void {
     CREATE INDEX IF NOT EXISTS idx_apps_created_at ON reseller_applications (created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_apps_email ON reseller_applications (contact_email);
   `);
+
+  // Columns added after the first release. The schema only ever gains
+  // columns, so an older release still reads a database a newer one touched.
+  const leadColumns = handle.prepare("PRAGMA table_info(leads)").all() as { name: string }[];
+  if (!leadColumns.some((c) => c.name === "mail_status")) {
+    handle.exec("ALTER TABLE leads ADD COLUMN mail_status TEXT");
+  }
 }
 
 export function insertLead(lead: LeadRecord): number {
@@ -96,6 +104,30 @@ export function insertLead(lead: LeadRecord): number {
     )
     .run(lead);
   return Number(result.lastInsertRowid);
+}
+
+/**
+ * Notification emails sent in the trailing window, across both forms — rows
+ * whose mail_status shows an attempt (not "not sent: …"). Feeds the hourly cap
+ * in lib/notify.ts. Table names are constants, never input.
+ */
+export function recentNotificationCount(windowMinutes = 60): number {
+  const conn = getDb();
+  const count = (table: "leads" | "reseller_applications") =>
+    (conn
+      .prepare(
+        `SELECT COUNT(*) AS count FROM ${table}
+         WHERE created_at >= datetime('now', ?) AND mail_status IS NOT NULL AND mail_status NOT LIKE 'not sent%'`,
+      )
+      .get(`-${windowMinutes} minutes`) as { count: number }).count;
+  return count("leads") + count("reseller_applications");
+}
+
+/** What happened to a signup's notification email: the provider's id, or why it was not sent. */
+export function setLeadMailStatus(id: number, status: string): void {
+  getDb()
+    .prepare("UPDATE leads SET mail_status = ? WHERE id = ?")
+    .run(status.slice(0, 500), id);
 }
 
 /** Count submissions from one email in the trailing window — used for basic abuse throttling. */

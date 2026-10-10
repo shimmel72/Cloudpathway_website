@@ -3,6 +3,7 @@ import path from "node:path";
 import { NextResponse } from "next/server";
 import { dbHealth } from "@/lib/db";
 import { describeMail, mailConfigured } from "@/lib/mailer";
+import { notifyTo } from "@/lib/notify";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -57,7 +58,7 @@ export async function GET(request: Request) {
       node: process.version,
       uptimeSeconds: Math.round(process.uptime()),
       db,
-      mail: { configured: mailConfigured(), describe: describeMail() },
+      mail: { configured: mailConfigured(), describe: describeMail(), to: notifyTo() },
       portalImportLinks: Boolean(process.env.PORTAL_URL),
     },
     { status, headers: { "cache-control": "no-store" } },

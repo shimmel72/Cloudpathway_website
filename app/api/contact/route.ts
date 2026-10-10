@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { insertLead, recentLeadCount } from "@/lib/db";
+import { insertLead, recentLeadCount, setLeadMailStatus } from "@/lib/db";
+import { leadHtml, leadSubject, leadText, type LeadEmail } from "@/lib/lead-email";
+import { notifyOwner } from "@/lib/notify";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -54,6 +56,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, reference: "CP-000000" }, { status: 202 });
   }
 
+  let id: number;
+  let lead: LeadEmail;
   try {
     if (recentLeadCount(data.email) >= 3) {
       return NextResponse.json(
@@ -65,7 +69,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const id = insertLead({
+    lead = {
       name: data.name,
       company: data.company,
       email: data.email,
@@ -73,14 +77,12 @@ export async function POST(request: Request) {
       service: data.service,
       seats: data.seats || null,
       message: data.message,
+    };
+    id = insertLead({
+      ...lead,
       sourcePage: request.headers.get("referer"),
       userAgent: request.headers.get("user-agent"),
     });
-
-    return NextResponse.json(
-      { ok: true, reference: `CP-${String(id).padStart(6, "0")}` },
-      { status: 201 },
-    );
   } catch (error) {
     console.error("[contact] failed to store lead:", error);
     return NextResponse.json(
@@ -88,4 +90,21 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
+
+  const reference = `CP-${String(id).padStart(6, "0")}`;
+
+  // Sent after the row is committed; a failure never fails the signup — the
+  // visitor's details are safe, and what happened is recorded on the row.
+  const status = await notifyOwner("contact", reference, {
+    replyTo: lead.email,
+    subject: leadSubject(lead, reference),
+    text: leadText(lead, reference),
+    html: leadHtml(lead, reference),
+  });
+  try {
+    setLeadMailStatus(id, status);
+  } catch (error) {
+    console.error(`[contact] ${reference} could not record mail status:`, error);
+  }
+  return NextResponse.json({ ok: true, reference }, { status: 201 });
 }

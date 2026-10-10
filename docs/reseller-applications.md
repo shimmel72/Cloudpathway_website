@@ -29,7 +29,7 @@ system already uses for numbers and SMS — one account, one bill.
 TELNYX_API_KEY=KEY0123...            # same key as the portal
 MAIL_FROM=Cloudpathway <no-reply@cloudpathway.org>
 PORTAL_URL=https://portal.cloudpathway.org
-RESELLER_APPLICATION_TO=12shimmel@gmail.com   # optional; this is the default
+NOTIFY_TO=12shimmel@gmail.com        # optional; this is the default (old name RESELLER_APPLICATION_TO still works)
 TELNYX_API_URL=                      # optional override, defaults to api.telnyx.com
 ```
 

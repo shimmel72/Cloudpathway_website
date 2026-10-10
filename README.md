@@ -86,7 +86,7 @@ Responses:
 
 | Status | Meaning |
 | --- | --- |
-| `201` | Stored. Returns `{ ok: true, reference: "CP-000001" }` |
+| `201` | Stored, then emailed to `NOTIFY_TO`. Returns `{ ok: true, reference: "CP-000001" }` |
 | `202` | Honeypot triggered — faked success, nothing stored |
 | `400` | Malformed JSON |
 | `422` | Validation failed. Returns `fieldErrors` keyed by field name |
@@ -98,8 +98,12 @@ per-email rate limit. Honeypot hits get a fake success so bots do not learn they
 
 ## Reseller applications
 
-`POST /api/reseller-application` stores the application, then emails it to the address in
-`RESELLER_APPLICATION_TO` (default `12shimmel@gmail.com`) through **Telnyx** — the same
+Every email the site sends goes to one address, `NOTIFY_TO` (default `12shimmel@gmail.com`);
+the site never emails visitors, and each notification's Reply-To is the visitor. Early-access
+signups (`/api/contact`) arrive as "Early-access signup — Company (Name)".
+
+`POST /api/reseller-application` stores the application, then emails it to `NOTIFY_TO`
+through **Telnyx** — the same
 transport and the same API key the PhoneSystem portal uses. The email carries an
 **Import into the portal** button that opens the portal's Resellers page with the
 applicant's details pre-filled.
@@ -108,7 +112,7 @@ applicant's details pre-filled.
 TELNYX_API_KEY=...                   # same key the phone system uses
 MAIL_FROM=Cloudpathway <no-reply@cloudpathway.org>
 PORTAL_URL=https://portal.cloudpathway.org
-RESELLER_APPLICATION_TO=12shimmel@gmail.com   # optional
+NOTIFY_TO=12shimmel@gmail.com        # optional; every email the site sends goes here
 ```
 
 The application row is committed **before** mail is attempted, and a send failure is

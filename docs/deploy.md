@@ -197,11 +197,13 @@ work before it builds again.
 ## 4. Prove mail works
 
 ```bash
-sudo bash deploy/install.sh test-mail --to 12shimmel@gmail.com
+sudo bash deploy/install.sh test-mail
 ```
 
-This sends through the deployed site's own mail code, the same function the
-reseller form uses, as the site's own account. So a pass proves the real
+This sends to where the site sends everything (`NOTIFY_TO`, 12shimmel@gmail.com
+by default; add `--to someone@example.com` to try another address). It goes
+through the deployed site's own mail code, the same function both forms use,
+as the site's own account. So a pass proves the real
 request. "Accepted" is not "delivered": check the inbox. If Telnyx refuses the
 sender, the domain in `MAIL_FROM` is not verified in Telnyx Email.
 PhoneSystem's `scripts/telnyx-email.mjs --domain …` walks that whole chain.
@@ -272,7 +274,8 @@ request repeated too quickly" (more than ten starts in a minute),
 | `TELNYX_API_KEY` | same key the phone system uses |
 | `MAIL_FROM` | `'Cloudpathway <no-reply@your-verified-domain>'` |
 | `PORTAL_URL` | the portal's `https://` address — enables the import button |
-| `RESELLER_APPLICATION_TO` | where applications go (default `12shimmel@gmail.com`) |
+| `NOTIFY_TO` | where **every** email the site sends goes — early-access signups and reseller applications (default `12shimmel@gmail.com`; the older name `RESELLER_APPLICATION_TO` still works) |
+| `NOTIFY_MAX_PER_HOUR` | at most this many of those emails per hour, 30 by default; past it, submissions are still saved, just not emailed, so a flood of fake signups cannot bury the inbox |
 
 Put values in single quotes, as above. The file is read by systemd, not by a
 shell.
@@ -438,7 +441,7 @@ served that folder. Move the folder back first if you ever use it.
 | the site loops between http and https | something on port 80 redirects to https behind the tunnel; `sudo nginx -T` for a `return 301 https` in the domain's blocks |
 | every visitor is `127.0.0.1` in the access log | the realip lines are missing; re-run `update` |
 | forms return 500 | `status` → `db:`; the data directory must be writable by `cloudpathway` |
-| applications stored but not emailed | `status` → `mail:`, then `test-mail` |
+| signups or applications stored but not emailed | `status` → `mail:`, then `test-mail`; each row's `mail_status` in the database says what happened |
 | no import button in the email | `PORTAL_URL` is empty |
 | anything else | `/var/log/cloudpathway-web-deploy.log`, `/var/log/nginx/cloudpathway-web.error.log` |
 

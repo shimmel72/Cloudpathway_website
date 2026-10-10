@@ -5,6 +5,7 @@ import {
   portalPrefill,
   type ResellerApplication,
 } from "./reseller";
+import { escapeHtml, oneLine } from "./escape";
 import { site } from "./site";
 
 /**
@@ -41,14 +42,6 @@ function safeUrl(value: string): string | null {
   return url.toString();
 }
 
-function escapeHtml(value: unknown): string {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
 
 
 /** The value a human should read for a field the form stores as a key. */
@@ -76,7 +69,7 @@ const LABELS: { key: keyof ResellerApplication; label: string }[] = [
 ];
 
 export function applicationSubject(app: ResellerApplication, reference: string): string {
-  return `Reseller application — ${app.companyName} (${reference})`;
+  return `Reseller application — ${oneLine(app.companyName)} (${reference})`;
 }
 
 export function applicationText(app: ResellerApplication, reference: string): string {

@@ -171,9 +171,10 @@ export function check(env, raw = null) {
   const key = env.get("TELNYX_API_KEY") ?? "";
   const from = env.get("MAIL_FROM") ?? "";
   const portal = env.get("PORTAL_URL") ?? "";
-  const to = env.get("RESELLER_APPLICATION_TO") ?? "";
+  const to = env.get("NOTIFY_TO") || env.get("RESELLER_APPLICATION_TO") || "";
+  const toName = env.get("NOTIFY_TO") ? "NOTIFY_TO" : "RESELLER_APPLICATION_TO";
 
-  if (!key) say("WARN", "TELNYX_API_KEY is empty — applications are stored but not emailed.");
+  if (!key) say("WARN", "TELNYX_API_KEY is empty — signups and applications are stored but not emailed.");
   else say("OK", `TELNYX_API_KEY set: ${mask(key)}`);
 
   if (!from) say("WARN", "MAIL_FROM is empty — Telnyx sends only as a verified domain, so mail cannot go out.");
@@ -184,8 +185,8 @@ export function check(env, raw = null) {
   else if (!/^https:\/\/[^/\s]+/.test(portal)) say("WARN", `PORTAL_URL "${portal}" should be the portal's https:// address.`);
   else say("OK", `PORTAL_URL ${portal}`);
 
-  if (to && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)) say("WARN", `RESELLER_APPLICATION_TO "${to}" is not an email address.`);
-  else say("OK", `Reseller applications go to ${to || "12shimmel@gmail.com (default)"}`);
+  if (to && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)) say("WARN", `${toName} "${to}" is not an email address.`);
+  else say("OK", `Every email the site sends goes to ${to || "12shimmel@gmail.com (default)"}`);
   return notes;
 }
 

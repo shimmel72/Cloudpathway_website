@@ -5,15 +5,12 @@ import {
   recentApplicationCount,
   setApplicationMailStatus,
 } from "@/lib/db";
-import { sendMail, mailConfigured, describeMail } from "@/lib/mailer";
+import { notifyOwner } from "@/lib/notify";
 import { applicationHtml, applicationSubject, applicationText } from "@/lib/reseller-email";
 import type { ResellerApplication } from "@/lib/reseller";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-/** Where applications land. Overridable so staging does not mail the owner. */
-const APPLICATION_TO = process.env.RESELLER_APPLICATION_TO || "12shimmel@gmail.com";
 
 const BUSINESS_TYPES = [
   "msp-it",
@@ -137,25 +134,16 @@ export async function POST(request: Request) {
    * try again because our SMTP credentials are wrong — we have their details,
    * and the failure is recorded on the row so it can be found and chased.
    */
-  if (!mailConfigured()) {
-    console.error(`[reseller-application] ${reference} stored but not emailed: ${describeMail()}`);
-    setApplicationMailStatus(id, `not sent: ${describeMail()}`);
-  } else {
-    try {
-      const result = await sendMail({
-        to: APPLICATION_TO,
-        replyTo: application.contactEmail,
-        subject: applicationSubject(application, reference),
-        text: applicationText(application, reference),
-        html: applicationHtml(application, reference),
-      });
-      setApplicationMailStatus(id, result.detail);
-      console.log(`[reseller-application] ${reference} emailed to ${APPLICATION_TO}: ${result.detail}`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      console.error(`[reseller-application] ${reference} stored but email failed: ${message}`);
-      setApplicationMailStatus(id, `failed: ${message}`);
-    }
+  const status = await notifyOwner("reseller-application", reference, {
+    replyTo: application.contactEmail,
+    subject: applicationSubject(application, reference),
+    text: applicationText(application, reference),
+    html: applicationHtml(application, reference),
+  });
+  try {
+    setApplicationMailStatus(id, status);
+  } catch (error) {
+    console.error(`[reseller-application] ${reference} could not record mail status:`, error);
   }
 
   return NextResponse.json({ ok: true, reference }, { status: 201 });

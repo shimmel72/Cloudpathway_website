@@ -29,4 +29,13 @@ test("check() is quiet about lines systemd reads as written", () => {
   const raw = "TELNYX_API_KEY='KEYabcdef0123456789'\nMAIL_FROM='Cloudpathway <no-reply@cloudpathway.org>'\nPORTAL_URL='https://portal.cloudpathway.org'\n";
   assert.ok(!check(parseSystemdEnv(raw), raw).some((n) => /systemd will deliver/.test(n.msg)));
 });
+test("every email goes to one address: NOTIFY_TO, else the older RESELLER_APPLICATION_TO, else the owner", () => {
+  const said = (raw) => check(parseSystemdEnv(raw), raw).map((n) => n.msg).find((m) => /Every email the site sends/.test(m));
+  assert.match(said(""), /goes to 12shimmel@gmail\.com \(default\)/);
+  assert.match(said("RESELLER_APPLICATION_TO='old@example.com'\n"), /goes to old@example\.com/);
+  assert.match(said("NOTIFY_TO='new@example.com'\nRESELLER_APPLICATION_TO='old@example.com'\n"), /goes to new@example\.com/);
+  const bad = check(parseSystemdEnv("NOTIFY_TO='nope'\n"), "NOTIFY_TO='nope'\n").map((n) => n.msg);
+  assert.ok(bad.some((m) => /NOTIFY_TO "nope" is not an email address/.test(m)));
+});
+
 console.log(`\n${passed} env-tool tests passed`);

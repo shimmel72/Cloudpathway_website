@@ -7,7 +7,7 @@
 #   sudo bash deploy/install.sh rollback          # back to the release that served before this one
 #   sudo bash deploy/install.sh restore-old-site  # give the domain back to whatever served it before
 #   sudo bash deploy/install.sh status
-#   sudo bash deploy/install.sh test-mail --to you@example.com
+#   sudo bash deploy/install.sh test-mail       # to where the site sends everything (--to to override)
 #
 # Options for install (all optional; the dry run says if one is needed):
 #   --cloudflare-tunnel | --no-cloudflare-tunnel
@@ -1283,7 +1283,7 @@ cmd_install() {
   step "Done — $DOMAIN is serving release $NEW_ID"
   info "status:   $ME status"
   info "settings: sudo vi $ENV_FILE && sudo systemctl restart $APP"
-  info "mail:     $ME test-mail --to you@example.com"
+  info "mail:     $ME test-mail"
   info "update:   git pull && $ME update"
   info "undo:     $ME rollback   |   $ME restore-old-site"
   if [[ -n $EXPOSED ]]; then
@@ -1408,7 +1408,7 @@ cmd_status() {
   if [[ -n $h ]] && json_get "$h" 'j' >/dev/null 2>&1; then
     info "health:  $(json_get "$h" '(j.ok ? "ok" : "NOT OK") + (j.node ? ", node " + j.node + ", up " + j.uptimeSeconds + "s" : "")' || echo "$h")"
     info "db:      $(json_get "$h" '(j.db.ok ? "writable " : "NOT WRITABLE ") + j.db.path + (j.db.error ? " — " + j.db.error : "")' || true)"
-    info "mail:    $(json_get "$h" 'j.mail.describe' || true)"
+    info "mail:    $(json_get "$h" 'j.mail.describe + (j.mail.to ? " — everything goes to " + j.mail.to : "")' || true)"
     info "import:  $(json_get "$h" 'j.portalImportLinks ? "portal import links on" : "PORTAL_URL not set — no import button"' || true)"
   else
     warn "no answer from http://127.0.0.1:$PORT/api/health${h:+: ${h:0:160}}"
@@ -1431,7 +1431,6 @@ cmd_status() {
 
 cmd_test_mail() {
   need_root; load_deploy_conf; use_saved
-  [[ -n $MAIL_TO ]] || die "--to is required: $ME test-mail --to you@example.com"
   local app; app=$(current_release)
   [[ -n $app ]] || die "nothing is deployed yet — test-mail sends with the deployed release's own mail code"
   [[ -f $ENV_FILE ]] || die "$ENV_FILE does not exist yet"
@@ -1444,7 +1443,7 @@ cmd_test_mail() {
   # app's code runs as the service account, exactly as the site would send.
   node "$ENVTOOL" export --env "$ENV_FILE" \
     | (cd / && runuser -u "$SVC_USER" -- "$NODE_BIN" --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --disable-warning=ExperimentalWarning \
-         "$app/deploy/test-mail.mjs" --env - --to "$MAIL_TO" --app "$app")
+         "$app/deploy/test-mail.mjs" --env - ${MAIL_TO:+--to "$MAIL_TO"} --app "$app")
 }
 
 case $CMD in
