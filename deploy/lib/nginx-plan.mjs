@@ -377,7 +377,27 @@ export function plan(dump, { domain, aliases = [], ownFile }) {
     listenHosts: { 80: hosts(80), 443: hosts(443) },
     ipv6,
     defaultImpact: defaultImpact(files, { ownFile, toDisable, defaultServer }),
+    servedDirs: servedDirs(tree).filter((r) => r.file !== ownFile),
   };
+}
+
+/**
+ * Every directory nginx serves files from: each `root` and `alias`, wherever it
+ * appears (http, server, location). The installer warns when the checkout it
+ * deploys from sits inside one — its .git and source would be downloadable.
+ */
+export function servedDirs(tree) {
+  const out = [];
+  const walk = (nodes) => {
+    for (const d of nodes) {
+      if ((d.name === "root" || d.name === "alias") && d.args[0] && !d.args[0].includes("$")) {
+        out.push({ path: d.args[0].replace(/\/+$/, "") || "/", directive: d.name, file: d.file, line: d.line });
+      }
+      if (d.block) walk(d.block);
+    }
+  };
+  walk(tree);
+  return out;
 }
 
 function withFile(d, file) {
@@ -483,14 +503,19 @@ export function render(p, { port, nginxVersion, mode = "http", leOptions = null,
         "",
       ]
     : []);
+  // Addresses of this machine: only a process running here can connect from
+  // one of them (a remote host cannot complete a TCP handshake with a forged
+  // source). Loopback always; the installer adds the machine's other addresses,
+  // since cloudflared reaches nginx through whatever its service URL resolves to.
+  const localAddrs = [...new Set(["127.0.0.1", "::1", ...(p.localAddresses ?? [])])]
+    .filter((a) => /^[0-9a-fA-F:.]+$/.test(a));
   const realIp = () => (mode === "tunnel"
     ? [
         "    # cloudflared connects from this machine; the visitor's address arrives in",
-        "    # CF-Connecting-IP. Trusted from loopback only, and only in this site's",
-        "    # blocks — the portal's handling of addresses is not changed. Without it,",
-        "    # every visitor shares one rate-limit bucket.",
-        "    set_real_ip_from 127.0.0.1;",
-        "    set_real_ip_from ::1;",
+        "    # CF-Connecting-IP. Trusted only from this machine's own addresses, and",
+        "    # only in this site's blocks — the portal's handling of addresses is not",
+        "    # changed. Without it, every visitor shares one rate-limit bucket.",
+        ...localAddrs.map((a) => `    set_real_ip_from ${a};`),
         "    real_ip_header   CF-Connecting-IP;",
         "",
       ]

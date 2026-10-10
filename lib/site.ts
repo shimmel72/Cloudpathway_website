@@ -15,8 +15,11 @@
 export const site = {
   name: "Cloudpathway",
   legalName: "Cloudpathway Communications",
-  domain: "cloudpathway.org",
-  url: "https://cloudpathway.org",
+  // The website's own address. The bare cloudpathway.org is not this site's
+  // (the installer never makes this site answer it); email stays on the
+  // cloudpathway.org domain.
+  domain: "info.cloudpathway.org",
+  url: "https://info.cloudpathway.org",
   tagline: "Enterprise-grade voice from a new company",
   description:
     "Cloudpathway is a new voice provider building SIP trunking and hosted PBX on enterprise-grade infrastructure. We are pre-launch — book a demo and judge the platform for yourself.",

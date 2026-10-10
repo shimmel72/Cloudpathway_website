@@ -115,6 +115,40 @@ test("REAL HOST: tunnel render — no redirect to https for the apex, real IP fr
   assert.doesNotMatch(out.slice(0, out.indexOf("server {")), /set_real_ip_from/, "real_ip must never be http-level (it would change the portal)");
 });
 
+test("tunnel render trusts this machine's own addresses (cloudflared may connect via the public IP), and nothing else", () => {
+  const p = plan(dump({ "/etc/nginx/nginx.conf": EL_NGINX_CONF, "/etc/nginx/conf.d/00-catchall.conf": TUNNEL_CATCHALL,
+    "/etc/nginx/conf.d/website.conf": TUNNEL_SITE }), { domain: "info.cloudpathway.org", ownFile: OWN });
+  p.localAddresses = ["207.90.216.140", "10.0.0.5", "fe80::1", "127.0.0.1", "1.2.3.4; evil", "$host"];
+  const out = render(p, { port: 3100, nginxVersion: "1.26.3", mode: "tunnel" });
+  const lines = out.split("\n").filter((l) => l.includes("set_real_ip_from")).map((l) => l.trim());
+  assert.deepEqual(lines, ["set_real_ip_from 127.0.0.1;", "set_real_ip_from ::1;", "set_real_ip_from 207.90.216.140;",
+    "set_real_ip_from 10.0.0.5;", "set_real_ip_from fe80::1;"]);
+});
+
+test("--domain info.cloudpathway.org: the apex site is left alone, and the new file answers only info", () => {
+  const p = plan(dump({ "/etc/nginx/nginx.conf": EL_NGINX_CONF, "/etc/nginx/conf.d/00-catchall.conf": TUNNEL_CATCHALL,
+    "/etc/nginx/conf.d/portal.conf": TUNNEL_PORTAL, "/etc/nginx/conf.d/website.conf": TUNNEL_SITE }),
+    { domain: "info.cloudpathway.org", ownFile: OWN });
+  assert.deepEqual(p.conflicts, []);
+  assert.deepEqual(p.toDisable, []);
+  assert.equal(p.source, "none");
+  assert.deepEqual(p.aliases, []);
+  const out = render(p, { port: 3100, nginxVersion: "1.26.3", mode: "tunnel" });
+  const names = [...out.matchAll(/server_name\s+([^;]+);/g)].map((m) => m[1]);
+  assert.deepEqual(names, ["info.cloudpathway.org"]);
+  assert.doesNotMatch(out, /default_server/);
+});
+
+test("served directories are reported (root and alias, any level), so a checkout inside one can be flagged", () => {
+  const p = plan(dump({
+    "/etc/nginx/nginx.conf": EL_NGINX_CONF.replace("root         /usr/share/nginx/html;", "root /usr/share/nginx/html/;"),
+    "/etc/nginx/conf.d/info.conf": "server { listen 80; server_name info.cloudpathway.org; root /usr/share/nginx/html/Cloudpathway_website; location /docs/ { alias /srv/docs/; } location /x { root $document_root/x; } }",
+  }), { domain: "info.cloudpathway.org", ownFile: OWN });
+  assert.deepEqual(p.servedDirs.map((r) => [r.path, r.directive]), [
+    ["/usr/share/nginx/html/Cloudpathway_website", "root"], ["/srv/docs", "alias"], ["/usr/share/nginx/html", "root"]]);
+  assert.deepEqual(p.toDisable, [{ path: "/etc/nginx/conf.d/info.conf", kind: "confd" }]);
+});
+
 /* ---------------- takeover safety ---------------- */
 
 test("certbot-managed site beside the portal: disable only the site's file, keep its cert (via its include)", () => {

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Cloudpathway website — install, update, roll back, and hand the domain back.
 #
-#   sudo bash deploy/install.sh install --domain cloudpathway.org --dry-run   # look first; changes nothing
-#   sudo bash deploy/install.sh install --domain cloudpathway.org
+#   sudo bash deploy/install.sh install --domain info.cloudpathway.org --dry-run   # look first; changes nothing
+#   sudo bash deploy/install.sh install --domain info.cloudpathway.org
 #   sudo bash deploy/install.sh update            # after `git pull` in this checkout
 #   sudo bash deploy/install.sh rollback          # back to the release that served before this one
 #   sudo bash deploy/install.sh restore-old-site  # give the domain back to whatever served it before
@@ -384,6 +384,8 @@ make_plan() {
   local w
   while read -r w; do [[ -n $w ]] && warn "$w"; done < <(plan_get 'j.warnings.join("\n")' || true)
 
+  check_checkout_exposure
+
   local kind path
   while IFS=$'\t' read -r kind path; do
     [[ $kind == confd && -e $path.cloudpathway-disabled ]] \
@@ -401,6 +403,26 @@ make_plan() {
   local aliases; aliases=$(plan_get 'j.aliases.join(" ")' || true)
   [[ -n $aliases ]] && info "also answering for: $aliases (redirected to $DOMAIN)"
   return 0
+}
+
+# Is this checkout inside a directory nginx serves files from? Then its .git
+# (the whole private repository) and source can be downloaded by anyone who
+# reaches that server block. The installer never serves the checkout — it
+# deploys a copy to /opt — so the checkout can live anywhere else.
+EXPOSED=
+check_checkout_exposure() {
+  local dir src repo_real d_real
+  repo_real=$(readlink -f "$REPO")
+  while IFS=$'\t' read -r dir src; do
+    [[ -n $dir ]] || continue
+    d_real=$(readlink -f "$dir" 2>/dev/null || printf '%s' "$dir")
+    [[ $d_real == / ]] && d_real=''
+    if [[ $repo_real == "$d_real" || $repo_real == "$d_real"/* ]]; then
+      EXPOSED="$dir ($src)"
+      warn "this checkout, $repo_real, is inside $dir, which nginx serves files from ($src). Anyone who reaches that server block can download its .git directory — the whole private repository — and its source. Nothing here needs it there: after installing, move the checkout out of the web root (docs/deploy.md, \"Where the checkout lives\")."
+      return 0
+    fi
+  done < <(plan_get 'j.servedDirs.map(r => r.path + "\t" + r.file + ":" + r.line).join("\n")' || true)
 }
 
 # What the certificate at $1 does when it nears expiry: auto | manual | unknown.
@@ -465,6 +487,21 @@ detect_tunnel() {
   fi
 }
 
+# This machine's own addresses. A connection from one of them was made by a
+# process running here (a remote host cannot complete a TCP handshake with a
+# forged source address), so cloudflared counts as local whichever of them its
+# service URL makes it use — /etc/hosts may well send it to the public IP.
+LOCAL_ADDRS=(127.0.0.1 ::1)
+load_local_addrs() {
+  local a
+  if command -v ip >/dev/null; then
+    while read -r a; do [[ -n $a ]] && LOCAL_ADDRS+=("${a%%/*}"); done < <(ip -o addr show 2>/dev/null | awk '{ print $4 }')
+  elif command -v hostname >/dev/null; then
+    for a in $(hostname -I 2>/dev/null); do LOCAL_ADDRS+=("$a"); done
+  fi
+}
+is_local_addr() { local a; [[ -n $1 ]] || return 1; for a in "${LOCAL_ADDRS[@]}"; do [[ $a == "$1" ]] && return 0; done; return 1; }
+
 find_in_nginx_logs() {  # $1 = unique string -> the client address nginx logged with it
   local i line
   for ((i = 0; i < 10; i++)); do
@@ -476,23 +513,28 @@ find_in_nginx_logs() {  # $1 = unique string -> the client address nginx logged 
 
 probe_public() {  # $1 = 1 to also find out which way the request came in
   local token; token=$(rand_token)
+  local own=''
   if ! public_get "/?cloudpathway-probe=$token"; then
-    info "could not reach https://$DOMAIN/ from here (${PUB_ERR:-no answer}); the check from outside after the switch will be skipped"
+    is_local_addr "$PUB_ADDR" && own=", which is this server's own address rather than Cloudflare's"
+    info "https://$DOMAIN/ gave no answer from here (${PUB_ERR:-no answer})${PUB_ADDR:+ — public DNS has $PUB_ADDR$own}"
     return 0
   fi
   BASE_CODE=$PUB_CODE
-  info "https://$DOMAIN/ answers $PUB_CODE from the internet today"
+  info "https://$DOMAIN/ answers $PUB_CODE from the internet today${PUB_ADDR:+ (public DNS: $PUB_ADDR)}"
   [[ ${1:-0} -eq 1 ]] || return 0
   PROBE_FROM=$(find_in_nginx_logs "cloudpathway-probe=$token")
-  case $PROBE_FROM in
-    127.0.0.1|::1) ok "and that request reached this nginx from $PROBE_FROM: through a tunnel on this machine" ;;
-    '') info "that request does not appear in this server's nginx logs" ;;
-    *) info "that request reached this nginx from $PROBE_FROM — directly, not through a tunnel" ;;
-  esac
+  if is_local_addr "$PROBE_FROM"; then
+    ok "and that request reached this nginx from $PROBE_FROM, this machine's own address: through a tunnel on this machine"
+  elif [[ -z $PROBE_FROM ]]; then
+    info "that request does not appear in this server's nginx logs"
+  else
+    info "that request reached this nginx from $PROBE_FROM — directly, not through a tunnel"
+  fi
 }
 
 decide_mode() {
   step "How visitors reach $DOMAIN"
+  load_local_addrs
   detect_tunnel
   [[ -n $TUNNEL_NOTE ]] && info "$TUNNEL_NOTE"
 
@@ -510,7 +552,7 @@ decide_mode() {
       elsewhere) probe_public 0 ;;
       unknown)
         probe_public 1
-        [[ $PROBE_FROM == 127.0.0.1 || $PROBE_FROM == ::1 ]] && tunnel=1 ;;
+        is_local_addr "$PROBE_FROM" && tunnel=1 ;;
     esac
   fi
 
@@ -533,6 +575,7 @@ decide_mode() {
     nginx -V 2>&1 | grep -q -- '--with-http_realip_module' \
       || die "this nginx is built without the realip module, which the tunnel setup needs to see visitors' addresses (otherwise every visitor shares one rate limit). Nothing was changed."
     MODE=tunnel
+    plan_set 'p.localAddresses = a;' "${LOCAL_ADDRS[@]}"
     ok "Cloudflare tunnel: nginx serves plain HTTP on port 80 for cloudflared; HTTPS stays at Cloudflare."
     info "No redirect to https in nginx (through a tunnel that is a loop), and visitors' addresses come from CF-Connecting-IP."
     if [[ $(plan_get 'j.oldServedHttps') == true ]]; then
@@ -1111,28 +1154,36 @@ verify_site() {
 }
 
 verify_public() {
-  if [[ -z $BASE_CODE ]]; then
-    info "not checked from the internet's side (it could not be reached from here before the switch either) — open https://$DOMAIN/ in a browser"
-    return 0
-  fi
   step "Checking https://$DOMAIN/ from the internet's side"
   local token i; token=$(rand_token)
   for ((i = 0; i < 6; i++)); do
-    public_get "/api/health?cloudpathway-check=$token$i" || true
-    if [[ $PUB_BODY == '{"ok":true}' ]]; then ok "https://$DOMAIN/ is the new site, as visitors see it"; return 0; fi
-    [[ $PUB_CODE == 3* ]] && break
+    if public_get "/api/health?cloudpathway-check=$token$i"; then
+      if [[ $PUB_BODY == '{"ok":true}' ]]; then ok "https://$DOMAIN/ is the new site, as visitors see it"; return 0; fi
+      [[ $PUB_CODE == 3* ]] && break
+    elif [[ -z $PUB_ADDR && -z ${CPW_TEST_PUBLIC_RESOLVE:-} ]]; then
+      break   # the name cannot be looked up from here at all
+    fi
     sleep 2
   done
   if [[ $PUB_CODE == 3* ]]; then
     warn "https://$DOMAIN/api/health answered $PUB_CODE, a redirect — behind Cloudflare that is a redirect loop"
     return 1
   fi
+  if [[ -n $PUB_CODE ]]; then
+    warn "from the internet, https://$DOMAIN/api/health answered $PUB_CODE: $(printf '%s' "${PUB_BODY:0:160}" | tr -cd '[:print:]')"
+    if [[ $MODE == tunnel ]]; then
+      warn "On this server the new site answers for $DOMAIN, so the tunnel is delivering the request somewhere else or under another name. In Zero Trust → Networks → Tunnels → (this tunnel) → Public Hostname → $DOMAIN: the service should be http://localhost:80, and Additional application settings → HTTP Settings → HTTP Host Header should be empty."
+    fi
+  fi
   if [[ $BASE_CODE == [23]* ]]; then
-    warn "from the internet, https://$DOMAIN/api/health answered ${PUB_CODE:-nothing}${PUB_ERR:+ ($PUB_ERR)}: ${PUB_BODY:0:160}"
     warn "before the switch https://$DOMAIN/ answered $BASE_CODE, so visitors are not getting the new site"
     return 1
   fi
-  warn "could not confirm from the internet's side (now ${PUB_CODE:-no answer}, before the switch $BASE_CODE) — open https://$DOMAIN/ in a browser"
+  if [[ -z $PUB_CODE ]]; then
+    info "could not check from the internet's side (${PUB_ERR:-no answer}) — open https://$DOMAIN/ in a browser"
+  else
+    warn "it did not answer from the internet before the switch either, so this is not treated as a failure — open https://$DOMAIN/ in a browser"
+  fi
   return 0
 }
 
@@ -1140,7 +1191,7 @@ verify_public() {
 cmd_install() {
   need_root
   load_deploy_conf
-  if [[ $CMD == update && -z $SAVED_DOMAIN ]]; then die "nothing installed yet — use: $ME install --domain cloudpathway.org"; fi
+  if [[ $CMD == update && -z $SAVED_DOMAIN ]]; then die "nothing installed yet — use: $ME install --domain info.cloudpathway.org"; fi
   if [[ -n $DOMAIN && -n $SAVED_DOMAIN && ${DOMAIN,,} != "$SAVED_DOMAIN" ]]; then
     die "this server's site is installed for $SAVED_DOMAIN. Moving it to ${DOMAIN,,} is not something update can do safely: run \`$ME restore-old-site\` first, remove $DEPLOY_CONF, then install for the new name."
   fi
@@ -1149,7 +1200,7 @@ cmd_install() {
   fi
   use_saved
   MODE=
-  [[ -n $DOMAIN ]] || die "--domain is required, e.g. --domain cloudpathway.org"
+  [[ -n $DOMAIN ]] || die "--domain is required, e.g. --domain info.cloudpathway.org"
   DOMAIN=${DOMAIN,,}
   [[ $DOMAIN =~ ^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$ ]] || die "\"$DOMAIN\" is not a hostname"
   [[ $PORT =~ ^[0-9]+$ && $PORT -ge 1024 && $PORT -le 65535 ]] || die "--port must be 1024-65535"
@@ -1235,6 +1286,20 @@ cmd_install() {
   info "mail:     $ME test-mail --to you@example.com"
   info "update:   git pull && $ME update"
   info "undo:     $ME rollback   |   $ME restore-old-site"
+  if [[ -n $EXPOSED ]]; then
+    # Look again at nginx as it is now: the block that served the checkout may
+    # just have been switched off, but another (nginx.conf's stock server,
+    # root /usr/share/nginx/html) can still reach it.
+    EXPOSED=
+    if nginx -T 2>/dev/null | node "$PLANNER" plan --domain "$DOMAIN" --own-file "$NGINX_CONF" >"$PLAN_FILE" 2>/dev/null; then
+      check_checkout_exposure
+    fi
+    if [[ -n $EXPOSED ]]; then
+      warn "reminder: move this checkout out of the web root now — docs/deploy.md, \"Where the checkout lives\"."
+    else
+      ok "no nginx block serves this checkout any more; still, keep checkouts out of web roots (docs/deploy.md, \"Where the checkout lives\")"
+    fi
+  fi
 }
 
 cmd_rollback() {

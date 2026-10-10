@@ -1,8 +1,13 @@
 # Deploying the Cloudpathway website
 
 One command installs the site behind the nginx you already run and takes over
-`cloudpathway.org` from whatever serves it today. Everything it does can be
+`info.cloudpathway.org` from whatever serves it today. Everything it does can be
 undone with one more command.
+
+**It answers for the name you give it and nothing else.** The bare
+`cloudpathway.org` and `www.cloudpathway.org` are not this site's: their nginx
+blocks are left exactly as they are, and the new site's file names only
+`info.cloudpathway.org`.
 
 It is written for the same machine as the phone system portal — CentOS Stream
 10 / RHEL family, nginx from the distribution, SELinux enforcing, Node 24,
@@ -14,7 +19,7 @@ How a visit reaches the site on that machine (PhoneSystem's
 `docs/cloudflare-tunnel.md`, §9b):
 
 ```
-visitor ──https──▶ Cloudflare ──tunnel──▶ cloudflared ──http──▶ nginx :80   (this machine)
+visitor ──https──▶ Cloudflare ──tunnel──▶ cloudflared ──http──▶ nginx :80   (this machine, Host: info.cloudpathway.org)
                                                                   │  /etc/nginx/conf.d/cloudpathway-web.conf
                                                                   ▼
                                                127.0.0.1:3100  next start   (systemd: cloudpathway-web)
@@ -41,7 +46,7 @@ On a machine that already runs PhoneSystem, all of this is already there.
 | npm, git, nginx, curl, tar | build, fetch, serve | `command -v npm git nginx curl tar` (missing one: `sudo dnf -y install tar`, etc.) |
 | `gcc-c++ make python3` | only if the SQLite module has no prebuilt binary for your Node | `sudo dnf -y install gcc-c++ make python3` |
 | ~1 GB free memory, ~1.5 GB free disk | `next build` | `free -m`, `df -h /opt` (the installer checks the disk) |
-| `cloudpathway.org` reaching this nginx | it is being replaced | `curl -sS -H 'Host: cloudpathway.org' http://127.0.0.1/ \| head -5` shows today's site |
+| `info.cloudpathway.org` reaching this nginx | it is being replaced | `curl -sS -H 'Host: info.cloudpathway.org' http://127.0.0.1/ \| head -5` shows today's site |
 
 **"System-wide" matters on EL.** `sudo` there resets `PATH` to
 `/sbin:/bin:/usr/sbin:/usr/bin`, so a Node in `/usr/local/bin` or under nvm is
@@ -80,14 +85,16 @@ checkout, but `bash` works whatever git did with the file mode.
 ## 2. Look before you replace anything
 
 ```bash
-sudo bash deploy/install.sh install --domain cloudpathway.org --dry-run
+sudo bash deploy/install.sh install --domain info.cloudpathway.org --dry-run
 ```
 
 This changes nothing on the server. It does send one ordinary request to
-`https://cloudpathway.org/` from outside, to see how the site answers today. It
+`https://info.cloudpathway.org/` from outside, to see how the site answers today. It
 prints:
 
-- what serves `cloudpathway.org` today, and which file would be switched off
+- what serves `info.cloudpathway.org` today, and which file would be switched off
+- whether the checkout you run it from sits inside a folder nginx serves (see
+  [Where the checkout lives](#where-the-checkout-lives))
 - how visitors reach the site, and so how nginx will serve it (see below)
 - the exact nginx configuration it would write
 
@@ -104,7 +111,7 @@ evidence, never from what happens to be lying around on disk.
 
 | What it finds | Mode | nginx serves |
 | --- | --- | --- |
-| `cloudflared` sends `cloudpathway.org` to `http://127.0.0.1:80` (or `localhost:80`) | **tunnel** | plain HTTP on :80 with **no** redirect to https. Visitors' addresses come from `CF-Connecting-IP`, trusted only from this machine and only in this site's blocks |
+| `cloudflared` sends `info.cloudpathway.org` to nginx on this machine's port 80 | **tunnel** | plain HTTP on :80 with **no** redirect to https. Visitors' addresses come from `CF-Connecting-IP`, trusted only from this machine's own addresses and only in this site's block |
 | the current site serves HTTPS itself | **tls** | HTTPS with the current site's certificate; :80 redirects |
 | the current site is plain HTTP, no tunnel | **http** | plain HTTP, as now |
 
@@ -118,7 +125,7 @@ Where the evidence comes from:
   for it in nginx's log. Arriving from `127.0.0.1` means through a tunnel on
   this machine. If that cannot be established, the install stops and asks for
   `--cloudflare-tunnel` (Zero Trust → Networks → Tunnels → your tunnel → Public
-  Hostname shows `cloudpathway.org` → `http://localhost:80`) or
+  Hostname shows `info.cloudpathway.org` → `http://localhost:80`) or
   `--no-cloudflare-tunnel`.
 - **A tunnel that sends the domain somewhere other than nginx on :80**: the
   install stops. Changing nginx would not change what visitors see.
@@ -135,7 +142,7 @@ Two rules hold in every mode:
 ## 3. Install
 
 ```bash
-sudo bash deploy/install.sh install --domain cloudpathway.org --import-phonesystem-env
+sudo bash deploy/install.sh install --domain info.cloudpathway.org --import-phonesystem-env
 ```
 
 You will be asked to type `replace`. Then, in this order:
@@ -171,7 +178,7 @@ You will be asked to type `replace`. Then, in this order:
    - behind a tunnel, visitors' real addresses come through
 6. **Check from the internet's side**: the name is looked up with Cloudflare's
    public resolver (this machine's own `/etc/hosts` points it straight back
-   here). Then `https://cloudpathway.org/api/health` must answer as the new
+   here). Then `https://info.cloudpathway.org/api/health` must answer as the new
    site. A redirect there fails the check, because behind Cloudflare it is a
    loop. If the site answered from outside before the switch and does not
    now, that fails it too.
@@ -274,7 +281,7 @@ shell.
 
 ```bash
 sudo bash deploy/install.sh rollback           # the release that served before this one
-sudo bash deploy/install.sh restore-old-site   # give cloudpathway.org back to the old site
+sudo bash deploy/install.sh restore-old-site   # give info.cloudpathway.org back to the old site
 ```
 
 `rollback` only ever goes to a release that has served before. A build that
@@ -296,29 +303,37 @@ again).
 ## Cloudflare tunnel
 
 Nothing in Cloudflare changes for this. The tunnel already sends
-`cloudpathway.org` (and `www.`) to nginx on port 80, and nginx picks the site by
-Host header, as it does today. In `/etc/cloudflared/config.yml`, or the
-dashboard's Public Hostnames, the rule for the domain must be:
+`info.cloudpathway.org` to nginx on port 80, and nginx picks the site by Host
+header, as it does today. In the dashboard (Zero Trust → Networks → Tunnels →
+your tunnel → Public Hostname), or `/etc/cloudflared/config.yml` for a locally
+managed tunnel, the rule for the name must be:
 
 ```yaml
-  - hostname: cloudpathway.org
-    service: http://127.0.0.1:80      # or http://localhost:80
+  - hostname: info.cloudpathway.org
+    service: http://localhost:80      # or http://127.0.0.1:80
 ```
 
-Do not set `httpHostHeader` on it: nginx routes on the Host header.
+**No HTTP Host Header override on it** (dashboard: Additional application
+settings → HTTP Settings → HTTP Host Header; config: `httpHostHeader`). nginx
+routes on the Host header, so an override set to, say, `cloudpathway.org` would
+keep sending visitors to the old site. The check from the internet's side would
+then fail and put nginx back. The installer says so when that happens.
 
 What the installer writes for a tunnel, and why:
 
 - **No `return 301 https://…` on port 80.** `cloudflared` always speaks plain
   HTTP to the origin, so a redirect there sends the visitor's https request back
   through the tunnel as http, forever. Cloudflare's own "Always Use HTTPS"
-  handles http visitors. `www.cloudpathway.org` redirects straight to
-  `https://cloudpathway.org`.
-- **`set_real_ip_from 127.0.0.1; real_ip_header CF-Connecting-IP;`** in this
-  site's server block only. Every request arrives from `cloudflared` on this
-  machine, so without it all visitors share one form rate limit, and the access
-  log shows only `127.0.0.1`. Trusting the header from loopback only means
-  nobody can set it from outside. The portal's blocks are not affected.
+  handles http visitors.
+- **`set_real_ip_from` this machine's own addresses, `real_ip_header
+  CF-Connecting-IP`**, in this site's server block only. Every request arrives
+  from `cloudflared` on this machine, so without it all visitors share one form
+  rate limit, and the access log shows only the server itself. Loopback is
+  always trusted. So are the machine's other addresses, because a service URL
+  that resolves through `/etc/hosts` makes `cloudflared` connect via the public
+  IP instead. Only a process on this machine can connect from those addresses,
+  so nobody can set the header from outside. The portal's blocks are not
+  affected.
 - `X-Forwarded-Proto` is passed through from Cloudflare (`https`), so the app
   knows the visitor used https.
 
@@ -343,7 +358,7 @@ Only relevant without a tunnel.
   certificate that renews itself, then pass `--tls`:
 
   ```bash
-  sudo certbot certonly --nginx -d cloudpathway.org -d www.cloudpathway.org \
+  sudo certbot certonly --nginx -d info.cloudpathway.org \
        --deploy-hook "systemctl reload nginx"
   sudo bash deploy/install.sh update --tls
   ```
@@ -356,7 +371,8 @@ Only relevant without a tunnel.
   proxied. Renewals by the nginx plugin need nothing.
 
 **The hand-issued certificate for `cloudpathway.org` on this server** is not
-used by the new site, and behind the tunnel nothing needs it. If
+used by the new site (it does not even cover `info.`), and behind the tunnel
+nothing needs it. If
 `sudo nginx -T | grep -n 'live/cloudpathway.org/'` finds nothing, nothing
 uses it. `sudo certbot delete --cert-name cloudpathway.org` then stops
 certbot's timer from failing to renew it every day.
@@ -372,20 +388,47 @@ renamed into place so it carries the right label.
 ## If the installer reports a conflict
 
 The installer only switches off a file when **every** server block in it belongs
-to `cloudpathway.org` (or `www.cloudpathway.org`), and only adds a file that
+to the domain (`info.cloudpathway.org`, or its `www.` if it had one), and only adds a file that
 leaves every other site's behaviour as it was. Anything else is reported, and
 nothing is changed:
 
 | Message | Fix |
 | --- | --- |
-| *the server block for cloudpathway.org also answers for portal…* | split it into two `server` blocks, and move the `cloudpathway.org` one into a file of its own in `/etc/nginx/conf.d/`, leaving the portal's file otherwise as it is |
-| *this file also holds a server block for …* | move the `cloudpathway.org` blocks into their own file in `/etc/nginx/conf.d/` |
+| *the server block for info.cloudpathway.org also answers for …* | split it into two `server` blocks, and move the `info.cloudpathway.org` one into a file of its own in `/etc/nginx/conf.d/`, leaving the other file otherwise as it is |
+| *this file also holds a server block for …* | move the `info.cloudpathway.org` block into its own file in `/etc/nginx/conf.d/` |
 | *lives in /etc/nginx/nginx.conf, which this installer will not edit* | move that `server` block into `/etc/nginx/conf.d/cloudpathway.conf` |
-| *server_name .cloudpathway.org also matches cloudpathway.org* | narrow the wildcard, or list the names it should serve |
+| *server_name .cloudpathway.org also matches info.cloudpathway.org* | narrow the wildcard, or list the names it should serve |
 | *nginx's default server there today is …/portal.conf* | that block answers requests by IP address (phones provisioning by IP, say) only because it happens to be first. This site's file would sort ahead of it. Make it explicit: change its `listen 80;` to `listen 80 default_server;` |
-| *serves cloudpathway.org again, and the copy this installer disabled before is still at …* | decide which of the two to keep and delete or move the other |
+| *serves info.cloudpathway.org again, and the copy this installer disabled before is still at …* | decide which of the two to keep and delete or move the other |
 
 Then `sudo nginx -t && sudo systemctl reload nginx`, and run the dry run again.
+
+## Where the checkout lives
+
+Not inside a folder nginx serves files from, such as `/usr/share/nginx/html/`.
+A git checkout there hands anyone who reaches that server block its `.git`
+directory (the whole private repository, history included), plus every source
+file. Try `https://info.cloudpathway.org/.git/config` on a site served that way.
+The installer never serves the checkout: it builds a copy into
+`/opt/cloudpathway-web/releases/` and runs that. So the checkout can live
+anywhere, and the installer warns when it finds one in a served folder.
+
+Once the new site is live, give the checkout a home of its own:
+
+```bash
+cd ~ && git clone https://github.com/shimmel72/Cloudpathway_website.git
+cd Cloudpathway_website && git checkout claude/cloudpathway-connectivity-nrtgwt
+```
+
+Run `install.sh` from there from now on; `update` remembers everything else.
+Then move the old copy out of the web root rather than deleting it:
+
+```bash
+sudo mv /usr/share/nginx/html/Cloudpathway_website /root/info-site-before-cloudpathway-web
+```
+
+`restore-old-site` re-enables the old `info.cloudpathway.org` block, which
+served that folder. Move the folder back first if you ever use it.
 
 ## Troubleshooting
 
