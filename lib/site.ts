@@ -1,9 +1,9 @@
 /**
  * Central site configuration.
  *
- * PLACEHOLDER VALUES: the contact and legal entity details below are stand-ins
- * so the site renders completely. Replace them with Cloudpathway's real details
- * before going live.
+ * PLACEHOLDER VALUES: the details marked below are stand-ins so the site
+ * renders completely. Replace them with Cloudpathway's real details before
+ * going live. The phone number is real.
  *
  * NOTE ON CLAIMS: this site deliberately makes no performance or customer-base
  * claims. Cloudpathway is pre-launch. The only capabilities asserted anywhere
@@ -24,9 +24,10 @@ export const site = {
   description:
     "Cloudpathway is a new voice provider building SIP trunking and hosted PBX on enterprise-grade infrastructure. We are pre-launch — book a demo and judge the platform for yourself.",
 
+  phone: "+1 (740) 730-9700",
+  phoneHref: "tel:+17407309700",
+
   // --- PLACEHOLDER: replace with real contact details ---
-  phone: "+1 (555) 013-7000",
-  phoneHref: "tel:+15550137000",
   salesEmail: "sales@cloudpathway.org",
   supportEmail: "support@cloudpathway.org",
   address: {
