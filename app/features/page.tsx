@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { featureGroups } from "@/lib/content";
 import { Check } from "@/components/Icons";
-import { Container, CtaBand, Eyebrow, Section, SectionHeading } from "@/components/ui";
+import { launch } from "@/lib/site";
+import { Container, CtaBand, Eyebrow, Section, SectionHeading, StatusPill } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Features",
   description:
-    "Auto attendants, call queues, softphones, call recording, reporting, failover, STIR/SHAKEN and more — standard across Cloudpathway SIP trunking and hosted PBX.",
+    "Auto attendants, call queues, softphones, call recording, reporting, failover, STIR/SHAKEN and more — standard across Cloudpathway SIP trunking and hosted PBX, coming soon.",
 };
 
 export default function FeaturesPage() {
@@ -15,14 +16,18 @@ export default function FeaturesPage() {
       <section className="border-b border-subtle bg-surface-muted">
         <Container className="py-16 sm:py-20">
           <div className="max-w-3xl">
-            <Eyebrow>Features</Eyebrow>
+            <StatusPill>{launch.label}</StatusPill>
+            <div className="mt-6">
+              <Eyebrow>Features</Eyebrow>
+            </div>
             <h1 className="text-4xl font-semibold sm:text-5xl">
               Standard, not &ldquo;available as an add-on&rdquo;
             </h1>
             <p className="mt-5 text-lg leading-relaxed text-body">
               A phone system earns its keep in the small things — the queue that announces wait
               times, the voicemail that shows up as readable text, the failover rule nobody had to
-              think about at 6am. Here is what comes with the platform.
+              think about at 6am. Here is what will come standard with the platform when it
+              launches.
             </p>
           </div>
         </Container>
@@ -48,8 +53,8 @@ export default function FeaturesPage() {
       ))}
 
       <CtaBand
-        title="Want to see it running?"
-        body="Demos are available on request. We will build your call flow — your routing, your hours, your failover — and walk you through the admin portal and softphone with it on screen, rather than a canned demo tenant."
+        title="Want to see it before launch?"
+        body="The platform is in development, and demos are available on request. We will build your call flow — your routing, your hours, your failover — and walk you through the admin portal and softphone with it on screen, rather than a canned demo tenant."
       />
     </>
   );

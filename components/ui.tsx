@@ -138,9 +138,28 @@ export function Stat({ value, label, dark = false }: { value: string; label: str
   );
 }
 
+/** The launch-status marker for page headers ("In development · available soon"). */
+export function StatusPill({ children, dark = false }: { children: ReactNode; dark?: boolean }) {
+  return (
+    <span
+      className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-medium ${
+        dark
+          ? "border-white/15 bg-white/5 text-ink-200"
+          : "border-accent-500/30 bg-accent-500/10 text-accent-700 dark:text-accent-300"
+      }`}
+    >
+      <span className="relative flex h-1.5 w-1.5">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-400 opacity-60 motion-reduce:hidden" />
+        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent-400" />
+      </span>
+      {children}
+    </span>
+  );
+}
+
 export function CtaBand({
-  title = "Let's talk about your phones.",
-  body = "Tell us what you run today and what is not working. We will come back with a design and an itemized quote — and if you would rather see it working first, ask for a demo.",
+  title = "Be first in line when we launch.",
+  body = "Cloudpathway is in development and will be available soon. Tell us what you run today and we will let you know the moment it is ready — and show you a demo before then, if you would like one.",
 }: {
   title?: string;
   body?: string;
@@ -153,10 +172,10 @@ export function CtaBand({
           <p className="mt-4 text-lg leading-relaxed text-ink-300">{body}</p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Button href="/contact" variant="primary" withArrow>
-              Request a demo
+              Get early access
             </Button>
             <Button href="/services" variant="ghost">
-              Compare services
+              See what&rsquo;s coming
             </Button>
           </div>
         </div>

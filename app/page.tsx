@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { differentiators, featureGroups, services } from "@/lib/content";
-import { site, startupNote } from "@/lib/site";
+import { launch, site, startupNote } from "@/lib/site";
 import {
   Bolt,
   Chart,
@@ -20,6 +20,7 @@ import {
   Eyebrow,
   Section,
   SectionHeading,
+  StatusPill,
 } from "@/components/ui";
 
 const serviceIcons = {
@@ -59,39 +60,35 @@ export default function HomePage() {
         <Container className="relative py-20 sm:py-28">
           <div className="grid items-center gap-14 lg:grid-cols-[1.12fr_0.88fr]">
             <div>
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-medium text-ink-200">
-                <span className="h-1.5 w-1.5 rounded-full bg-accent-400" />
-                SIP trunking &amp; hosted PBX &middot; pre-launch
-              </span>
+              <StatusPill dark>{launch.label}</StatusPill>
 
               <h1 className="mt-6 text-4xl font-semibold leading-[1.08] text-white sm:text-5xl lg:text-[3.05rem]">
-                <span className="whitespace-nowrap">Enterprise-grade</span> voice from a company you
-                haven&rsquo;t heard of{" "}
-                <span className="bg-gradient-to-r from-brand-300 to-accent-300 bg-clip-text text-transparent">
-                  yet
+                <span className="whitespace-nowrap">Enterprise-grade</span> business voice,{" "}
+                <span className="whitespace-nowrap bg-gradient-to-r from-brand-300 to-accent-300 bg-clip-text text-transparent">
+                  coming soon
                 </span>
                 .
               </h1>
 
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-300">
-                {site.name} is new. The platform is not a prototype: geographically redundant call
-                routing, encrypted signaling and media, STIR/SHAKEN attestation, and somebody on
-                call around the clock. What we do not have yet is other people&rsquo;s mileage &mdash;
-                so we would rather show you than tell you.
+                {site.name} SIP trunking and hosted PBX are in development and will be available
+                soon. We are building on geographically redundant call routing, encrypted signaling
+                and media, STIR/SHAKEN attestation, and somebody on call around the clock. Join the
+                early-access list and you will hear the moment it is ready.
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <Button href="/contact" variant="primary" withArrow>
-                  Request a demo
+                <Button href={launch.cta.href} variant="primary" withArrow>
+                  {launch.cta.label}
                 </Button>
                 <Button href="/services" variant="ghost">
-                  Explore our services
+                  See what&rsquo;s coming
                 </Button>
               </div>
 
-              <p className="mt-6 flex items-center gap-2 text-sm text-ink-400">
+              <p className="mt-6 flex flex-wrap items-center gap-2 text-sm text-ink-400">
                 <Phone className="h-4 w-4" />
-                Prefer to talk? Call{" "}
+                Questions, or want a demo? Call{" "}
                 <a href={site.phoneHref} className="font-medium text-ink-200 underline-offset-4 hover:underline">
                   {site.phone}
                 </a>
@@ -113,7 +110,12 @@ export default function HomePage() {
                         <Icon className="h-5 w-5" />
                       </span>
                       <div>
-                        <h2 className="text-base font-semibold text-white">{service.name}</h2>
+                        <h2 className="flex flex-wrap items-center gap-2 text-base font-semibold text-white">
+                          {service.name}
+                          <span className="rounded-full border border-accent-400/40 px-2 py-0.5 text-[0.7rem] font-medium uppercase tracking-[0.08em] text-accent-300">
+                            Coming soon
+                          </span>
+                        </h2>
                         <p className="mt-0.5 text-sm font-medium text-accent-300">{service.kicker}</p>
                         <p className="mt-3 text-sm leading-relaxed text-ink-400">{service.bestFor}</p>
                       </div>
@@ -141,9 +143,12 @@ export default function HomePage() {
                 </p>
               ))}
             </div>
-            <div className="mt-8">
-              <Button href="/contact" variant="secondary" withArrow>
-                Request a demo
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Button href={launch.cta.href} variant="primary" withArrow>
+                {launch.cta.label}
+              </Button>
+              <Button href="/contact" variant="secondary">
+                Ask for a demo
               </Button>
             </div>
           </div>
@@ -153,7 +158,7 @@ export default function HomePage() {
       {/* Pillars */}
       <Section>
         <SectionHeading
-          eyebrow="What the platform does"
+          eyebrow="What we are building"
           title="Phone service is boring infrastructure. That is the point."
           lead="Nobody wants to think about their phone system. Our job is to build one you can stop thinking about — and to pick up quickly on the rare day you have to."
         />
@@ -173,9 +178,9 @@ export default function HomePage() {
       {/* Services detail */}
       <Section tone="muted" id="services">
         <SectionHeading
-          eyebrow="What we do"
+          eyebrow="What's coming"
           title="Two ways to get your calls onto our network"
-          lead="Most customers will land on one of these. If you are not sure which fits, that is exactly what the discovery call is for."
+          lead="Both are in development and will launch together. If you are not sure which will fit, tell us what you run today and we will say."
         />
 
         <div className="mt-14 grid gap-6 lg:grid-cols-2">
@@ -221,7 +226,7 @@ export default function HomePage() {
           <SectionHeading
             eyebrow="Features"
             title="Everything a modern phone system should already do"
-            lead="Auto attendants, queues, softphones, recording, reporting and failover are standard on the platform — not add-ons you discover at renewal."
+            lead="Auto attendants, queues, softphones, recording, reporting and failover will be standard on the platform — not add-ons you discover at renewal."
           />
           <Button href="/features" variant="secondary" withArrow>
             See all features

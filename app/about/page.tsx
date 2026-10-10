@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { process, values } from "@/lib/content";
-import { site } from "@/lib/site";
+import { launch, site } from "@/lib/site";
 import { Globe, Headset, Shield, Users } from "@/components/Icons";
 import {
   Card,
@@ -10,11 +10,12 @@ import {
   Eyebrow,
   Section,
   SectionHeading,
+  StatusPill,
 } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "About",
-  description: `Who ${site.name} is: a new, independent voice provider running SIP trunking and hosted PBX on enterprise-grade infrastructure, with engineers you can actually reach.`,
+  description: `Who ${site.name} is: a new, independent voice provider building SIP trunking and hosted PBX on enterprise-grade infrastructure — in development and available soon.`,
 };
 
 const infrastructure = [
@@ -40,13 +41,13 @@ const infrastructure = [
   },
 ];
 
-/** Deliberately capabilities, not metrics. We are pre-launch; there is nothing to measure yet. */
+/** Deliberately capabilities, not metrics. We are in development; there is nothing to measure yet. */
 const canBackUp = [
   "Geographically redundant call routing",
   "TLS signaling and SRTP media encryption",
   "STIR/SHAKEN attestation on outbound calls",
   "Round-the-clock on-call for outages",
-  "Month-to-month terms on every service",
+  "Month-to-month terms on every service at launch",
   "Demos built to your requirements, on request",
 ];
 
@@ -56,14 +57,18 @@ export default function AboutPage() {
       <section className="border-b border-subtle bg-surface-muted">
         <Container className="py-16 sm:py-20">
           <div className="max-w-3xl">
-            <Eyebrow>About us</Eyebrow>
+            <StatusPill>{launch.label}</StatusPill>
+            <div className="mt-6">
+              <Eyebrow>About us</Eyebrow>
+            </div>
             <h1 className="text-4xl font-semibold sm:text-5xl">
               We are the phone company you can actually get on the phone
             </h1>
             <p className="mt-5 text-lg leading-relaxed text-body">
-              {site.name} is a new, independent business voice provider. We run our own SIP and
-              hosted PBX platform, hold our own carrier relationships, and answer our own support
-              calls &mdash; so when something goes wrong there is nobody for us to point at.
+              {site.name} is a new, independent business voice provider. Our SIP trunking and
+              hosted PBX are in development and will be available soon. We run our own platform,
+              hold our own carrier relationships, and will answer our own support calls &mdash; so
+              when something goes wrong there is nobody for us to point at.
             </p>
           </div>
         </Container>
@@ -86,11 +91,12 @@ export default function AboutPage() {
                 padded number, every other claim on the page becomes suspect.
               </p>
               <p>
-                So: {site.name} is pre-launch. We have built the platform, we are confident in the
-                engineering behind it, and we are looking for the first businesses willing to put
-                it to work. What we are offering those early customers is not a discount in
-                exchange for being guinea pigs. It is unusually direct access to the people who
-                built the thing, and terms that let you leave without penalty if we disappoint you.
+                So: {site.name} is in development, and the service will be available soon. We are
+                building the platform now, we are confident in the engineering behind it, and we
+                are looking for the first businesses who want to put it to work when it opens.
+                What we will offer those early customers is not a discount in exchange for being
+                guinea pigs. It is unusually direct access to the people who built the thing, and
+                terms that let you leave without penalty if we disappoint you.
               </p>
               <p>
                 We have deliberately kept the business narrow. We do SIP trunking and hosted PBX,
@@ -103,11 +109,11 @@ export default function AboutPage() {
 
           <Card className="h-fit">
             <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-faint">
-              What we can back up today
+              What we are building in
             </h3>
             <p className="mt-4 text-sm leading-relaxed text-body">
-              No uptime percentages or customer counts, because we have not run long enough to
-              have earned either. These are capabilities you can verify in a demo:
+              No uptime percentages or customer counts, because we have not launched yet. These are
+              the capabilities the platform is being built with &mdash; ask for a demo to see them:
             </p>
             <ul className="mt-5 space-y-3">
               {canBackUp.map((item) => (
@@ -188,7 +194,7 @@ export default function AboutPage() {
         <SectionHeading
           eyebrow="Working with us"
           title="What happens after you get in touch"
-          lead="No pressure sequence, no seven-touch nurture campaign. A conversation, a demo if you want one, a written proposal, and a migration we run."
+          lead="No pressure sequence, no seven-touch nurture campaign. Before launch: a conversation, and a demo if you want one. At launch: a written proposal, and a migration we run."
         />
         <ol className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
           {process.map((p) => (
@@ -202,8 +208,8 @@ export default function AboutPage() {
       </Section>
 
       <CtaBand
-        title="Come test it yourself"
-        body="The first call is with someone who can answer technical questions, because that is who you will be working with anyway. Ask for a demo and we will build your call flow so you can try to break it."
+        title="Be one of our first customers"
+        body="Cloudpathway is in development and will be available soon. The first call is with someone who can answer technical questions, because that is who you will be working with anyway. Join the early-access list — or ask for a demo, and we will build your call flow so you can try to break it."
       />
     </>
   );

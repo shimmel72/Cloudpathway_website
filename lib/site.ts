@@ -6,7 +6,7 @@
  * going live. The phone number is real.
  *
  * NOTE ON CLAIMS: this site deliberately makes no performance or customer-base
- * claims. Cloudpathway is pre-launch. The only capabilities asserted anywhere
+ * claims. Cloudpathway is in development. The only capabilities asserted anywhere
  * are ones confirmed to exist today: geographic redundancy, round-the-clock
  * on-call, encrypted signaling and media, and STIR/SHAKEN attestation. Do not
  * add uptime percentages, customer counts, or response-time figures until they
@@ -20,9 +20,9 @@ export const site = {
   // cloudpathway.org domain.
   domain: "info.cloudpathway.org",
   url: "https://info.cloudpathway.org",
-  tagline: "Enterprise-grade voice from a new company",
+  tagline: "Enterprise-grade business voice, coming soon",
   description:
-    "Cloudpathway is a new voice provider building SIP trunking and hosted PBX on enterprise-grade infrastructure. We are pre-launch — book a demo and judge the platform for yourself.",
+    "Cloudpathway is building SIP trunking and hosted PBX on enterprise-grade infrastructure. The service is in development and will be available soon — join the early-access list to hear first.",
 
   phone: "+1 (740) 730-9700",
   phoneHref: "tel:+17407309700",
@@ -42,16 +42,26 @@ export const site = {
 } as const;
 
 /**
- * Replaces the headline stat strip. We are pre-launch, so there are no metrics
+ * Replaces the headline stat strip. We are in development, so there are no metrics
  * to put here that would not be invented.
  */
 export const startupNote = {
-  heading: "We're a new company. We'd rather say so.",
+  heading: "In development. Available soon.",
   body: [
-    "That means we have no decade of uptime charts to wave at you. It also means no legacy billing platform, no offshore support tier, and no five-year contract with an early-termination clause buried on page nine.",
-    "The platform itself is not a prototype. It runs on geographically redundant infrastructure, signaling and media are encrypted, calls carry STIR/SHAKEN attestation, and somebody is on call around the clock. What it does not have yet is other people's mileage.",
-    "So we would rather show you than tell you. Ask for a demo and put it through its paces before you commit to anything.",
+    "Cloudpathway SIP trunking and hosted PBX are being built now, and they are not available to buy yet. We will open them up soon — and the people on the early-access list hear first.",
+    "It is not a side project. The platform is being built on geographically redundant call routing, with encrypted signaling and media, STIR/SHAKEN attestation, and somebody on call around the clock. What it does not have yet is customers, and we would rather say so plainly.",
+    "Join the early-access list and we will tell you the moment it is ready. If you would like to see the platform as it stands, ask for a demo.",
   ],
+} as const;
+
+/**
+ * Launch status, shown on every page. While the service is in development this
+ * is the site's headline message; change it here when that changes.
+ */
+export const launch = {
+  label: "In development · available soon",
+  banner: "Cloudpathway is in development — SIP trunking and hosted PBX will be available soon.",
+  cta: { href: "/contact", label: "Get early access" },
 } as const;
 
 export const nav = [

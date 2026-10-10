@@ -16,7 +16,8 @@ export function Footer() {
             </div>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-body">
               SIP trunking and hosted PBX on enterprise-grade infrastructure, from a new
-              independent voice provider. Demos available on request.
+              independent voice provider. In development and available soon &mdash; demos on
+              request.
             </p>
           </div>
 

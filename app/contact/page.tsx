@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { faqs } from "@/lib/content";
-import { site } from "@/lib/site";
+import { launch, site } from "@/lib/site";
 import { Clock, Mail, Phone, Pin } from "@/components/Icons";
 import { ContactForm } from "@/components/ContactForm";
-import { Card, Container, Eyebrow, Section, SectionHeading } from "@/components/ui";
+import { Card, Container, Eyebrow, Section, SectionHeading, StatusPill } from "@/components/ui";
 
 export const metadata: Metadata = {
-  title: "Contact",
-  description: `Request a quote for SIP trunking or hosted PBX from ${site.name}. A written proposal, usually within two business days.`,
+  title: "Get early access",
+  description: `${site.name} SIP trunking and hosted PBX are in development and available soon. Join the early-access list to hear first, or ask for a demo.`,
 };
 
 export default function ContactPage() {
@@ -16,13 +16,17 @@ export default function ContactPage() {
       <section className="border-b border-subtle bg-surface-muted">
         <Container className="py-16 sm:py-20">
           <div className="max-w-3xl">
-            <Eyebrow>Contact</Eyebrow>
-            <h1 className="text-4xl font-semibold sm:text-5xl">Tell us about your phones</h1>
+            <StatusPill>{launch.label}</StatusPill>
+            <div className="mt-6">
+              <Eyebrow>Early access</Eyebrow>
+            </div>
+            <h1 className="text-4xl font-semibold sm:text-5xl">Be first in line</h1>
             <p className="mt-5 text-lg leading-relaxed text-body">
-              Fill this in and an engineer &mdash; not a sales development rep &mdash; will get
-              back to you within one business day. Demos are available on request: tell us how your
-              calls should route and we will build it so you can test it yourself. If you would
-              rather just talk, the number is on the right.
+              {site.name} is in development and will be available soon. Tell us about your phones
+              and you are on the early-access list: we will let you know the moment it is ready.
+              An engineer &mdash; not a sales development rep &mdash; reads every message and
+              replies within one business day. Demos are available on request in the meantime. If
+              you would rather just talk, the number is on the right.
             </p>
           </div>
         </Container>
@@ -44,7 +48,7 @@ export default function ContactPage() {
                     <a href={site.phoneHref} className="font-semibold text-strong hover:underline">
                       {site.phone}
                     </a>
-                    <span className="mt-0.5 block text-faint">Sales &amp; support</span>
+                    <span className="mt-0.5 block text-faint">Questions &amp; demos</span>
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -62,7 +66,7 @@ export default function ContactPage() {
                     <a href={`mailto:${site.supportEmail}`} className="font-semibold text-strong hover:underline">
                       {site.supportEmail}
                     </a>
-                    <span className="mt-0.5 block text-faint">Existing customers</span>
+                    <span className="mt-0.5 block text-faint">Support</span>
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -86,20 +90,20 @@ export default function ContactPage() {
               </h2>
               <ol className="mt-5 space-y-3 text-sm text-body">
                 <li>
-                  <span className="font-semibold text-strong">1.</span> A short reply confirming we
-                  have it, with anything we still need to know.
+                  <span className="font-semibold text-strong">1.</span> A short reply within one
+                  business day, with anything we still need to know.
                 </li>
                 <li>
-                  <span className="font-semibold text-strong">2.</span> A 30-minute call about what
-                  you run today and what breaks.
+                  <span className="font-semibold text-strong">2.</span> A place on the early-access
+                  list &mdash; you hear first when {site.name} is available.
                 </li>
                 <li>
-                  <span className="font-semibold text-strong">3.</span> A demo, if you want one
-                  &mdash; your call flow, built for you to test at no cost.
+                  <span className="font-semibold text-strong">3.</span> A call and a demo, if you
+                  want them &mdash; your call flow, built for you to test at no cost.
                 </li>
                 <li>
-                  <span className="font-semibold text-strong">4.</span> A written design and an
-                  itemized quote, typically inside two business days.
+                  <span className="font-semibold text-strong">4.</span> At launch, a written design
+                  and an itemized quote.
                 </li>
               </ol>
             </Card>

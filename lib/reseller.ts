@@ -62,8 +62,8 @@ export const goodFit = [
  */
 export const beforeYouApply = [
   {
-    title: "We are pre-launch, and so is this programme",
-    body: "You would be among the first resellers on the platform, not the hundredth. That means unusual access to the people building it and real influence over the roadmap — and it also means you are taking a bet on a young company. We would rather you weighed that with your eyes open.",
+    title: "We are in development, and so is this programme",
+    body: "Cloudpathway is not available yet; it launches soon. You would be among the first resellers on the platform, not the hundredth. That means unusual access to the people building it and real influence over the roadmap — and it also means you are taking a bet on a young company. We would rather you weighed that with your eyes open.",
   },
   {
     title: "Commercial terms are set with you, not by a form",
@@ -90,7 +90,7 @@ export const resellerFaqs = [
   },
   {
     q: "Can we keep our existing customers on their current numbers?",
-    a: "Yes. Porting is included, and we run it. Bring us the bills and letters of authorisation and we deal with the losing carrier.",
+    a: "Yes. Porting will be included, and we run it. Bring us the bills and letters of authorisation and we deal with the losing carrier.",
   },
   {
     q: "What happens after we apply?",

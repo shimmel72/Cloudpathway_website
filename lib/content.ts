@@ -161,8 +161,8 @@ export const featureGroups: FeatureGroup[] = [
 export const differentiators = [
   {
     icon: "shield",
-    title: "We tell you we're new",
-    body: "Cloudpathway is pre-launch. You will not find invented uptime percentages or a logo wall of customers we do not have on this site, because the moment you catch a provider padding one number you have to wonder about all of them.",
+    title: "We tell you where we are",
+    body: "Cloudpathway is in development and not available yet. You will not find invented uptime percentages or a logo wall of customers we do not have on this site, because the moment you catch a provider padding one number you have to wonder about all of them.",
   },
   {
     icon: "bolt",
@@ -187,7 +187,7 @@ export const differentiators = [
   {
     icon: "sliders",
     title: "No hostage contracts",
-    body: "Month-to-month is available on every service, and your numbers are yours. If you decide to leave, we port them out promptly and without a retention gauntlet.",
+    body: "Month-to-month will be available on every service, and your numbers will always be yours. If you decide to leave, we port them out promptly and without a retention gauntlet.",
   },
 ] as const;
 
@@ -208,6 +208,14 @@ export const values = [
 
 export const faqs = [
   {
+    q: "When will Cloudpathway be available?",
+    a: "Soon. SIP trunking and hosted PBX are in development, and we will announce a launch date when we are sure we can keep it. Join the early-access list on this page and you will hear first \u2014 with enough notice to plan a migration rather than rush one.",
+  },
+  {
+    q: "Can we sign up now?",
+    a: "Not yet \u2014 the service is not available to buy. What you can do now is join the early-access list, ask for a demo of the platform as it stands, and tell us what you would need on day one. Joining the list costs nothing and commits you to nothing.",
+  },
+  {
     q: "You are a new company. Why would we trust you with our phones?",
     a: "You should not trust us on the strength of a website — ours or anyone else's. What we can offer instead is evidence you can check yourself: a demo built to your requirements that you are free to try to break, a month-to-month term so leaving costs you nothing but the effort of porting, and numbers that remain yours throughout. We would rather earn a small book of customers who can vouch for us than win a large one on claims we cannot back.",
   },
@@ -221,7 +229,7 @@ export const faqs = [
   },
   {
     q: "Can we keep our existing phone numbers?",
-    a: "Yes. Number porting is included with every service, covering main numbers, DID blocks, toll-free, and fax lines. We handle the paperwork with your current carrier and schedule the cutover with you \u2014 most ports complete in two to four weeks depending on how quickly the losing carrier moves.",
+    a: "Yes. Number porting will be included with every service, covering main numbers, DID blocks, toll-free, and fax lines. We handle the paperwork with your current carrier and schedule the cutover with you \u2014 most ports complete in two to four weeks depending on how quickly the losing carrier moves.",
   },
   {
     q: "What internet connection do we need?",
@@ -241,6 +249,6 @@ export const faqs = [
   },
   {
     q: "How long are the contracts?",
-    a: "Month-to-month is available on every service. Longer terms are available if you would prefer a lower rate in exchange for commitment, but that is your choice rather than a requirement \u2014 and for a provider as new as we are, we think month-to-month is the honest default.",
+    a: "Month-to-month will be available on every service. Longer terms will be available if you would prefer a lower rate in exchange for commitment, but that is your choice rather than a requirement \u2014 and for a provider as new as we are, we think month-to-month is the honest default.",
   },
 ];

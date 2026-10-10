@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { site } from "@/lib/site";
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
     "business VoIP",
     "unified communications",
     "number porting",
+    "coming soon",
   ],
   openGraph: {
     type: "website",
@@ -39,6 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
+        <AnnouncementBar />
         <Header />
         <main id="main" className="flex-1">
           {children}

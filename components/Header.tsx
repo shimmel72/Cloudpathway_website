@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { nav, site } from "@/lib/site";
+import { launch, nav, site } from "@/lib/site";
 import { Logo, Phone } from "./Icons";
 import { Container } from "./ui";
 
@@ -53,10 +53,10 @@ export function Header() {
               {site.phone}
             </a>
             <Link
-              href="/contact"
+              href={launch.cta.href}
               className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
             >
-              Request a demo
+              {launch.cta.label}
             </Link>
           </div>
 
@@ -95,10 +95,10 @@ export function Header() {
               {site.phone}
             </a>
             <Link
-              href="/contact"
+              href={launch.cta.href}
               className="mt-2 rounded-lg bg-brand-600 px-4 py-2.5 text-center text-sm font-semibold text-white"
             >
-              Request a demo
+              {launch.cta.label}
             </Link>
           </Container>
         </div>

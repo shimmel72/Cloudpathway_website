@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { process, services } from "@/lib/content";
+import { launch } from "@/lib/site";
 import { Cloud, Globe } from "@/components/Icons";
 import {
   Button,
@@ -10,12 +11,13 @@ import {
   Eyebrow,
   Section,
   SectionHeading,
+  StatusPill,
 } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "SIP trunking to modernise the PBX you already own, and hosted PBX to replace it entirely. Number porting, failover and migration included.",
+    "Coming soon from Cloudpathway: SIP trunking to modernise the PBX you already own, and hosted PBX to replace it entirely — with number porting, failover and migration included.",
 };
 
 const serviceIcons = {
@@ -38,14 +40,17 @@ export default function ServicesPage() {
       <section className="border-b border-subtle bg-surface-muted">
         <Container className="py-16 sm:py-20">
           <div className="max-w-3xl">
-            <Eyebrow>Services</Eyebrow>
+            <StatusPill>{launch.label}</StatusPill>
+            <div className="mt-6">
+              <Eyebrow>Services</Eyebrow>
+            </div>
             <h1 className="text-4xl font-semibold sm:text-5xl">
               Two services, one network behind them
             </h1>
             <p className="mt-5 text-lg leading-relaxed text-body">
-              Whether you keep your phone system or hand it to us, your calls ride the same
-              redundant voice network, with the same porting help and the same engineers on
-              support.
+              Both are in development and will be available soon. Whether you keep your phone
+              system or hand it to us, your calls will ride the same redundant voice network, with
+              the same porting help and the same engineers on support.
             </p>
           </div>
         </Container>
@@ -93,8 +98,11 @@ export default function ServicesPage() {
                   ))}
                 </ul>
                 <div className="mt-7 border-t border-subtle pt-6">
-                  <Button href="/contact" variant="primary" className="w-full" withArrow>
-                    Request a demo
+                  <p className="mb-4 text-center text-xs font-medium uppercase tracking-[0.12em] text-faint">
+                    Coming soon
+                  </p>
+                  <Button href={launch.cta.href} variant="primary" className="w-full" withArrow>
+                    {launch.cta.label}
                   </Button>
                 </div>
               </Card>
@@ -136,9 +144,9 @@ export default function ServicesPage() {
       {/* Process */}
       <Section tone="muted" id="process">
         <SectionHeading
-          eyebrow="Getting started"
-          title="How a migration actually goes"
-          lead="Nothing cuts over until you have tested it and picked the window. Your old service stays up the whole time."
+          eyebrow="At launch"
+          title="How a migration will go"
+          lead="Nothing will cut over until you have tested it and picked the window. Your old service stays up the whole time."
         />
         <ol className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
           {process.map((p) => (
@@ -152,8 +160,8 @@ export default function ServicesPage() {
       </Section>
 
       <CtaBand
-        title="Not sure which service fits?"
-        body="Tell us what you have today. We will tell you honestly whether it is worth keeping — including when the answer is that you should stay where you are."
+        title="Not sure which service will fit?"
+        body="Tell us what you have today and join the early-access list. We will tell you honestly whether it is worth keeping — including when the answer is that you should stay where you are."
       />
     </>
   );

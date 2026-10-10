@@ -21,9 +21,10 @@ export default function ResellerApplyPage() {
             <Eyebrow>Reseller application</Eyebrow>
             <h1 className="text-4xl font-semibold sm:text-5xl">Tell us about your business</h1>
             <p className="mt-5 text-lg leading-relaxed text-body">
-              About five minutes. Nothing here commits either of us to anything &mdash; commercial
-              terms get worked out in a conversation afterwards. Only the starred fields are
-              required; the rest just save us a round trip.
+              About five minutes. {site.name} is in development and launching soon; applying now
+              means you can be selling on day one. Nothing here commits either of us to anything
+              &mdash; commercial terms get worked out in a conversation afterwards. Only the starred
+              fields are required; the rest just save us a round trip.
             </p>
             <p className="mt-4 text-sm text-faint">
               <Link href="/resellers" className="font-medium text-brand-700 underline-offset-4 hover:underline dark:text-brand-300">

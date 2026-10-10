@@ -68,10 +68,10 @@ export function ContactForm() {
         <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent-500/15 text-accent-600 dark:text-accent-300">
           <Check className="h-6 w-6" />
         </span>
-        <h3 className="mt-5 text-xl font-semibold text-strong">Thanks — we have got it.</h3>
+        <h3 className="mt-5 text-xl font-semibold text-strong">You&rsquo;re on the early-access list.</h3>
         <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-body">
-          One of our engineers will get back to you within one business day. If it is urgent,
-          call us and quote your reference number.
+          We will let you know the moment Cloudpathway is available, and one of our engineers will
+          get back to you within one business day. If you call us, quote your reference number.
         </p>
         {reference ? (
           <p className="mt-5 inline-block rounded-lg bg-surface-muted px-4 py-2 font-mono text-sm text-strong">
@@ -183,7 +183,7 @@ export function ContactForm() {
           disabled={status === "submitting"}
           className="inline-flex flex-none items-center justify-center rounded-lg bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {status === "submitting" ? "Sending…" : "Send enquiry"}
+          {status === "submitting" ? "Sending…" : "Get early access"}
         </button>
       </div>
     </form>

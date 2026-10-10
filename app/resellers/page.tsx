@@ -15,7 +15,7 @@ import {
 
 export const metadata: Metadata = {
   title: "Resellers",
-  description: `Resell ${site.name} SIP trunking and hosted PBX under your own brand. You own the customer, the pricing and the relationship; we run the network. Applications open.`,
+  description: `Resell ${site.name} SIP trunking and hosted PBX under your own brand. You own the customer, the pricing and the relationship; we run the network. In development, available soon — applications open now.`,
 };
 
 const doesIcons = [Users, Sliders, Chart, Headset];
@@ -34,7 +34,7 @@ export default function ResellersPage() {
           <div className="max-w-3xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-medium text-ink-200">
               <span className="h-1.5 w-1.5 rounded-full bg-accent-400" />
-              Reseller programme &middot; applications open
+              In development &middot; reseller applications open now
             </span>
             <h1 className="mt-6 text-4xl font-semibold leading-[1.08] text-white sm:text-5xl">
               Sell phone service under your own name. We&rsquo;ll run the{" "}
@@ -47,6 +47,8 @@ export default function ResellersPage() {
               Your customers already ask you to fix their phones. This is how you own that instead
               of handing it to a carrier who then owns the relationship. You keep the customer, the
               branding and the margin; we keep the carriers, the redundancy and the on-call rota.
+              {" "}{site.name} is in development and launching soon &mdash; apply now and you are
+              ready to sell on day one.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Button href="/resellers/apply" variant="primary" withArrow>
@@ -175,8 +177,10 @@ export default function ResellersPage() {
               Apply to become a reseller today
             </h2>
             <p className="mt-4 text-lg leading-relaxed text-ink-300">
-              It takes about five minutes. We read every application ourselves and reply within two
-              business days &mdash; including when the answer is no.
+              It takes about five minutes. {site.name} is in development and launching soon, so
+              applying now puts you among the first resellers on the platform. We read every
+              application ourselves and reply within two business days &mdash; including when the
+              answer is no.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button href="/resellers/apply" variant="primary" withArrow>
